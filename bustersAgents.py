@@ -52,7 +52,6 @@ class KeyboardInference(inference.InferenceModule):
     """
     Basic inference module for use with the keyboard.
     """
-
     def initializeUniformly(self, gameState):
         "Begin with a uniform distribution over ghost positions."
         self.beliefs = util.Counter()
@@ -180,15 +179,17 @@ class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
         else: msg += str(gameState.getDistanceNearestFood())+","
         #msg += "Distance nearest pac dots: " + data
         
-        #Last action
-        msg+= str(action)+","
-
         #Last score
         msg+=str(gameState.data.score)+","
 
+        #Next scoreChange
+        msg+=str(newGameState.data.scoreChange)+","
+
+        #Last action
+        msg+= str(action)+","
+        
         #Next score
         msg+=str(newGameState.data.score)+"\n"
-        
         return msg  
 
 class RandomPAgent(BustersAgent):
@@ -579,60 +580,3 @@ class BasicAgentAA(BustersAgent):
         print(">",move)
     
         return move
-    
-
-
-        # Pacman position
-        data = ','.join(map(str, gameState.getPacmanPosition()))
-        #msg = "Pacman position:"+data+","
-        msg = data+","
-        # Legal actions for Pacman in current position
-        #data = ','.join(map(str, gameState.getLegalPacmanActions()))
-        #msg += "Legal actions: "+data+","
-        #msg += data+","
-        # Pacman direction
-        data = gameState.data.agentStates[0].getDirection()
-        #msg += "Pacman direction: " + data 
-        msg += data+","
-
-        # Alive ghosts (index 0 corresponds to Pacman and is always false)
-        for livinGhost in gameState.getLivingGhosts()[1:]:
-
-            msg += str(livinGhost)+","
-        #data = ','.join(map(str, gameState.getLivingGhosts()))
-        #msg += "Living ghosts: "+data+","
-        #msg += data+","
-
-        # Ghosts positions
-        for i in range(0, gameState.getNumAgents()-1):
-            data = ','.join(map(str, gameState.getGhostPositions()[i]))
-            msg += data+"," 
-        # Ghosts directions
-        data = ','.join(map(str, [gameState.getGhostDirections().get(
-            i) for i in range(0, gameState.getNumAgents() - 1)]))
-        #msg += "Ghosts directions: "+data+","
-        msg += data+","
-        # Manhattan distance to ghosts
-        for ghostDistance in gameState.data.ghostDistances:
-            if ghostDistance == None:
-                ghostDistance = -1
-            msg += str(ghostDistance)+","
-        
-        #msg += "Ghosts distances: "+data+","
-        #msg += data+","
-        # Manhattan distance to the closest pac dot
-        if gameState.getDistanceNearestFood() == None:
-            msg += str(-1)+","
-        else: msg += str(gameState.getDistanceNearestFood())+","
-        #msg += "Distance nearest pac dots: " + data
-        
-        #Last action
-        msg+= str(action)+","
-
-        #Last score
-        msg+=str(score)+","
-
-        #Next score
-        msg+=str(nextScore)+"\n"
-        
-        return msg  

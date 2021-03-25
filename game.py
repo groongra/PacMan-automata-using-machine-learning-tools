@@ -566,9 +566,10 @@ class Game(object):
 @ATTRIBUTE ghost_3_distance NUMERIC
 @ATTRIBUTE ghost_4_distance NUMERIC
 @ATTRIBUTE pac_dots_distance NUMERIC
-
-@ATTRIBUTE pac_action {North,South,East,West,Stop}
 @ATTRIBUTE score NUMERIC
+@ATTRIBUTE score_change NUMERIC
+
+@ATTRIBUTE next_action {North,South,East,West,Stop}
 @ATTRIBUTE next_score NUMERIC
 
 @DATA\n
