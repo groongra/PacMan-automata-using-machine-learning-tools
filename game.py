@@ -538,6 +538,44 @@ class Game(object):
         import io
         self.agentOutput = [io.StringIO() for agent in agents]
 
+        self.text_file = open("pacmanState.arff", "a+")  #CUSTOM
+        if os.stat("pacmanState.arff").st_size == 0:
+            arffHeader = """@RELATION Pacman-data-training
+
+@ATTRIBUTE pacman_position_x NUMERIC
+@ATTRIBUTE pacman_position_y NUMERIC
+@ATTRIBUTE pacman_direction {North,South,East,West,Stop}
+@ATTRIBUTE alive_ghost_1 {True,False}
+@ATTRIBUTE alive_ghost_2 {True,False}
+@ATTRIBUTE alive_ghost_3 {True,False}
+@ATTRIBUTE alive_ghost_4 {True,False}
+@ATTRIBUTE ghost_1_position_x NUMERIC
+@ATTRIBUTE ghost_1_position_y NUMERIC
+@ATTRIBUTE ghost_2_position_x NUMERIC
+@ATTRIBUTE ghost_2_position_y NUMERIC
+@ATTRIBUTE ghost_3_position_x NUMERIC
+@ATTRIBUTE ghost_3_position_y NUMERIC
+@ATTRIBUTE ghost_4_position_x NUMERIC
+@ATTRIBUTE ghost_4_position_y NUMERIC
+@ATTRIBUTE ghost_1_direction {North,South,East,West,Stop}
+@ATTRIBUTE ghost_2_direction {North,South,East,West,Stop}
+@ATTRIBUTE ghost_3_direction {North,South,East,West,Stop}
+@ATTRIBUTE ghost_4_direction {North,South,East,West,Stop}
+@ATTRIBUTE ghost_1_distance NUMERIC
+@ATTRIBUTE ghost_2_distance NUMERIC
+@ATTRIBUTE ghost_3_distance NUMERIC
+@ATTRIBUTE ghost_4_distance NUMERIC
+@ATTRIBUTE pac_dots_distance NUMERIC
+
+@ATTRIBUTE pac_action {North,South,East,West,Stop}
+@ATTRIBUTE score NUMERIC
+@ATTRIBUTE next_score NUMERIC
+
+@DATA\n
+"""
+            
+            self.text_file.write(arffHeader)    
+
     def getProgress(self):
         if self.gameOver:
             return 1.0
@@ -574,6 +612,9 @@ class Game(object):
         """
         Main control loop for game play.
         """
+
+        #text_file = open("pacmanState.dat", "a+")                                    #CUSTOM
+
         self.display.initialize(self.state.data)
         self.numMoves = 0
 
@@ -646,6 +687,7 @@ class Game(object):
                 self.unmute()
             else:
                 observation = self.state.deepCopy()
+            
             # Solicit an action
             action = None
             step += 1
@@ -692,6 +734,7 @@ class Game(object):
                     return
             else:
                 action = agent.getAction(observation)
+                
             self.unmute()
 
             # Execute the action
@@ -705,7 +748,38 @@ class Game(object):
                     self.unmute()
                     return
             else:
+
                 self.state = self.state.generateSuccessor( agentIndex, action )
+
+            # Generate an observation of the new state
+            '''if 'observationFunction' in dir( agent ):
+                self.mute(agentIndex)
+                if self.catchExceptions:
+                    try:
+                        timed_func = TimeoutFunction(agent.observationFunction, int(self.rules.getMoveTimeout(agentIndex)))
+                        try:
+                            start_time = time.time()
+                            observation = timed_func(self.state.deepCopy())
+                        except TimeoutFunctionException:
+                            skip_action = True
+                        move_time += time.time() - start_time
+                        self.unmute()
+                    except Exception as data:
+                        self._agentCrash(agentIndex, quiet=False)
+                        self.unmute()
+                        return
+                else:
+                    new_observation = agent.observationFunction(self.state.deepCopy())
+                self.unmute()
+            else:
+                new_observation = self.state.deepCopy()'''
+            
+            new_observation = self.state
+
+            #Save action and state
+            if(hasattr(agent, "printLineData")):
+                pacmanStateMsg = agent.printLineData(observation, action, new_observation)                   #CUSTOM
+                self.text_file.write(pacmanStateMsg) 
 
             # Change the display
             self.display.update( self.state.data )
@@ -718,9 +792,11 @@ class Game(object):
             if agentIndex == numAgents + 1: self.numMoves += 1
             # Next agent
             agentIndex = ( agentIndex + 1 ) % numAgents
-
+        
             if _BOINC_ENABLED:
                 boinc.set_fraction_done(self.getProgress())
+
+        #text_file.close()             #CUSTOM 
 
         # inform a learning agent of the game result
         for agentIndex, agent in enumerate(self.agents):
@@ -735,3 +811,6 @@ class Game(object):
                     self.unmute()
                     return
         self.display.finish()
+
+    def __del__(self):                      #Destructor de python
+        self.text_file.close()              #CUSTOM  
