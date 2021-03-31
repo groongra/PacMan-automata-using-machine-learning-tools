@@ -544,6 +544,11 @@ class Game(object):
 
 @ATTRIBUTE pacman_position_x NUMERIC
 @ATTRIBUTE pacman_position_y NUMERIC
+@ATTRIBUTE is_North_Valid {True,False}
+@ATTRIBUTE is_South_Valid {True,False}
+@ATTRIBUTE is_East_Valid {True,False}
+@ATTRIBUTE is_West_Valid {True,False}
+@ATTRIBUTE is_Stop_Valid {True,False}
 @ATTRIBUTE pacman_direction {North,South,East,West,Stop}
 @ATTRIBUTE alive_ghost_1 {True,False}
 @ATTRIBUTE alive_ghost_2 {True,False}

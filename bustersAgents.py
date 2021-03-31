@@ -125,10 +125,34 @@ class BustersAgent(object):
         data = ','.join(map(str, gameState.getPacmanPosition()))
         #msg = "Pacman position:"+data+","
         msg = data+","
+
         # Legal actions for Pacman in current position
-        #data = ','.join(map(str, gameState.getLegalPacmanActions()))
-        #msg += "Legal actions: "+data+","
+
+        if "North" in  gameState.getLegalPacmanActions():
+            data = "True,"
+        else:
+            data = "False,"
+
+        if "South" in  gameState.getLegalPacmanActions():
+            data += "True,"
+        else:
+            data += "False,"
+
+        if "East" in  gameState.getLegalPacmanActions():
+            data += "True,"
+        else:
+            data += "False,"
+
+        if "West" in  gameState.getLegalPacmanActions():
+            data += "True,"
+        else:
+            data += "False,"
+        
+        data+= "True,"
+        msg+= data
+
         #msg += data+","
+
         # Pacman direction
         data = gameState.data.agentStates[0].getDirection()
         #msg += "Pacman direction: " + data 
@@ -198,10 +222,34 @@ class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
         data = ','.join(map(str, gameState.getPacmanPosition()))
         #msg = "Pacman position:"+data+","
         msg = data+","
+
         # Legal actions for Pacman in current position
-        #data = ','.join(map(str, gameState.getLegalPacmanActions()))
-        #msg += "Legal actions: "+data+","
+
+        if "North" in  gameState.getLegalPacmanActions():
+            data = "True,"
+        else:
+            data = "False,"
+
+        if "South" in  gameState.getLegalPacmanActions():
+            data += "True,"
+        else:
+            data += "False,"
+
+        if "East" in  gameState.getLegalPacmanActions():
+            data += "True,"
+        else:
+            data += "False,"
+
+        if "West" in  gameState.getLegalPacmanActions():
+            data += "True,"
+        else:
+            data += "False,"
+        
+        data+= "True,"
+        msg+= data
+
         #msg += data+","
+
         # Pacman direction
         data = gameState.data.agentStates[0].getDirection()
         #msg += "Pacman direction: " + data 
@@ -300,10 +348,34 @@ class RandomPAgent(BustersAgent):
         data = ','.join(map(str, gameState.getPacmanPosition()))
         #msg = "Pacman position:"+data+","
         msg = data+","
+
         # Legal actions for Pacman in current position
-        #data = ','.join(map(str, gameState.getLegalPacmanActions()))
-        #msg += "Legal actions: "+data+","
+
+        if "North" in  gameState.getLegalPacmanActions():
+            data = "True,"
+        else:
+            data = "False,"
+
+        if "South" in  gameState.getLegalPacmanActions():
+            data += "True,"
+        else:
+            data += "False,"
+
+        if "East" in  gameState.getLegalPacmanActions():
+            data += "True,"
+        else:
+            data += "False,"
+
+        if "West" in  gameState.getLegalPacmanActions():
+            data += "True,"
+        else:
+            data += "False,"
+        
+        data+= "True,"
+        msg+= data
+
         #msg += data+","
+
         # Pacman direction
         data = gameState.data.agentStates[0].getDirection()
         #msg += "Pacman direction: " + data 
@@ -403,10 +475,34 @@ class GreedyBustersAgent(BustersAgent):
         data = ','.join(map(str, gameState.getPacmanPosition()))
         #msg = "Pacman position:"+data+","
         msg = data+","
+
         # Legal actions for Pacman in current position
-        #data = ','.join(map(str, gameState.getLegalPacmanActions()))
-        #msg += "Legal actions: "+data+","
+
+        if "North" in  gameState.getLegalPacmanActions():
+            data = "True,"
+        else:
+            data = "False,"
+
+        if "South" in  gameState.getLegalPacmanActions():
+            data += "True,"
+        else:
+            data += "False,"
+
+        if "East" in  gameState.getLegalPacmanActions():
+            data += "True,"
+        else:
+            data += "False,"
+
+        if "West" in  gameState.getLegalPacmanActions():
+            data += "True,"
+        else:
+            data += "False,"
+        
+        data+= "True,"
+        msg+= data
+
         #msg += data+","
+
         # Pacman direction
         data = gameState.data.agentStates[0].getDirection()
         #msg += "Pacman direction: " + data 
@@ -765,10 +861,34 @@ class BasicAgentAA(BustersAgent):
         data = ','.join(map(str, gameState.getPacmanPosition()))
         #msg = "Pacman position:"+data+","
         msg = data+","
+
         # Legal actions for Pacman in current position
-        #data = ','.join(map(str, gameState.getLegalPacmanActions()))
-        #msg += "Legal actions: "+data+","
+
+        if "North" in  gameState.getLegalPacmanActions():
+            data = "True,"
+        else:
+            data = "False,"
+
+        if "South" in  gameState.getLegalPacmanActions():
+            data += "True,"
+        else:
+            data += "False,"
+
+        if "East" in  gameState.getLegalPacmanActions():
+            data += "True,"
+        else:
+            data += "False,"
+
+        if "West" in  gameState.getLegalPacmanActions():
+            data += "True,"
+        else:
+            data += "False,"
+        
+        data+= "True,"
+        msg+= data
+
         #msg += data+","
+
         # Pacman direction
         data = gameState.data.agentStates[0].getDirection()
         #msg += "Pacman direction: " + data 
