@@ -1,0 +1,135 @@
+* ID3 *
+
+
+USE TRAINING SET:
+
+Correctly Classified Instances         499               95.0476 %
+Incorrectly Classified Instances        26                4.9524 %
+Kappa statistic                          0.9331
+Mean absolute error                      0.0217
+Root mean squared error                  0.1042
+Relative absolute error                  7.3586 %
+Root relative squared error             27.1376 %
+Total Number of Instances              525
+
+
+CROSS-VALIDATION:
+
+Correctly Classified Instances         306               58.2857 %
+Incorrectly Classified Instances       199               37.9048 %
+Kappa statistic                          0.4674
+Mean absolute error                      0.1583
+Root mean squared error                  0.3904
+Relative absolute error                 55.7552 %
+Root relative squared error            103.6505 %
+UnClassified Instances                  20                3.8095 %
+Total Number of Instances              525
+
+
+PERCENTAGE SPLIT:
+
+Correctly Classified Instances         102               57.3034 %
+Incorrectly Classified Instances        65               36.5169 %
+Kappa statistic                          0.4809
+Mean absolute error                      0.1521
+Root mean squared error                  0.3846
+Relative absolute error                 54.9276 %
+Root relative squared error            103.7091 %
+UnClassified Instances                  11                6.1798 %
+Total Number of Instances              178
+
+
+
+
+
+SAMEMAPS:
+
+Correctly Classified Instances         114               52.5346 %
+Incorrectly Classified Instances        58               26.7281 %
+Kappa statistic                          0.5392
+Mean absolute error                      0.137 
+Root mean squared error                  0.3608
+Relative absolute error                 58.2358 %
+Root relative squared error            104.9177 %
+UnClassified Instances                  45               20.7373 %
+Total Number of Instances              217
+
+
+OTHERMAPS:
+
+Correctly Classified Instances          76               42.6966 %
+Incorrectly Classified Instances        55               30.8989 %
+Kappa statistic                          0.4468
+Mean absolute error                      0.1685
+Root mean squared error                  0.3895
+Relative absolute error                 76.192  %
+Root relative squared error            116.0944 %
+UnClassified Instances                  47               26.4045 %
+Total Number of Instances              178
+
+
+
+* J48 *
+
+
+USE TRAINING SET:
+
+Correctly Classified Instances         415               79.0476 %
+Incorrectly Classified Instances       110               20.9524 %
+Kappa statistic                          0.715 
+Mean absolute error                      0.1306
+Root mean squared error                  0.2556
+Relative absolute error                 44.2739 %
+Root relative squared error             66.5652 %
+Total Number of Instances              525
+
+
+CROSS-VALIDATION:
+
+Correctly Classified Instances         361               68.7619 %
+Incorrectly Classified Instances       164               31.2381 %
+Kappa statistic                          0.5762
+Mean absolute error                      0.1651
+Root mean squared error                  0.3122
+Relative absolute error                 55.9355 %
+Root relative squared error             81.3051 %
+Total Number of Instances              525
+
+
+PERCENTAGE SPLIT:
+
+Correctly Classified Instances         120               67.4157 %
+Incorrectly Classified Instances        58               32.5843 %
+Kappa statistic                          0.5503
+Mean absolute error                      0.17  
+Root mean squared error                  0.3186
+Relative absolute error                 57.7284 %
+Root relative squared error             83.3914 %
+Total Number of Instances              178     
+
+
+
+
+
+SAMEMAPS:
+
+Correctly Classified Instances         160               73.7327 %
+Incorrectly Classified Instances        57               26.2673 %
+Kappa statistic                          0.6465
+Mean absolute error                      0.1565
+Root mean squared error                  0.2936
+Relative absolute error                 52.462  %
+Root relative squared error             75.6413 %
+Total Number of Instances              217
+
+
+OTHERMAPS:
+
+Correctly Classified Instances         140               78.6517 %
+Incorrectly Classified Instances        38               21.3483 %
+Kappa statistic                          0.7194
+Mean absolute error                      0.1476
+Root mean squared error                  0.2836
+Relative absolute error                 48.4925 %
+Root relative squared error             71.6571 %
+Total Number of Instances              178
