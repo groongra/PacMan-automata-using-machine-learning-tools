@@ -133,3 +133,70 @@ Root mean squared error                  0.2836
 Relative absolute error                 48.4925 %
 Root relative squared error             71.6571 %
 Total Number of Instances              178
+
+
+
+* MULTILAYER PERCEPTRON *
+
+
+USE TRAINING SET:
+
+Correctly Classified Instances         497               94.6667 %
+Incorrectly Classified Instances        28                5.3333 %
+Kappa statistic                          0.9279
+Mean absolute error                      0.0271
+Root mean squared error                  0.1111
+Relative absolute error                  9.176  %
+Root relative squared error             28.9322 %
+Total Number of Instances              525
+
+
+CROSS-VALIDATION:
+
+Correctly Classified Instances         353               67.2381 %
+Incorrectly Classified Instances       172               32.7619 %
+Kappa statistic                          0.5556
+Mean absolute error                      0.1368
+Root mean squared error                  0.3324
+Relative absolute error                 46.3696 %
+Root relative squared error             86.5667 %
+Total Number of Instances              525
+
+
+PERCENTAGE SPLIT:
+
+Correctly Classified Instances         115               64.6067 %
+Incorrectly Classified Instances        63               35.3933 %
+Kappa statistic                          0.5103
+Mean absolute error                      0.1491
+Root mean squared error                  0.3546
+Relative absolute error                 50.6231 %
+Root relative squared error             92.8298 %
+Total Number of Instances              178     
+
+
+
+
+
+SAMEMAPS:
+
+Correctly Classified Instances         131               60.3687 %
+Incorrectly Classified Instances        86               39.6313 %
+Kappa statistic                          0.4576
+Mean absolute error                      0.1694
+Root mean squared error                  0.371 
+Relative absolute error                 56.7939 %
+Root relative squared error             95.5889 %
+Total Number of Instances              217
+
+
+OTHERMAPS:
+
+Correctly Classified Instances          97               54.4944 %
+Incorrectly Classified Instances        81               45.5056 %
+Kappa statistic                          0.4033
+Mean absolute error                      0.1824
+Root mean squared error                  0.379 
+Relative absolute error                 59.9556 %
+Root relative squared error             95.7666 %
+Total Number of Instances              178

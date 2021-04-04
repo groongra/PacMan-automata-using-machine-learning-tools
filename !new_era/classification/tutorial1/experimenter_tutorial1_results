@@ -1,0 +1,27 @@
+Tester:     weka.experiment.PairedCorrectedTTester -G 4,5,6 -D 1 -R 2 -S 0.05 -result-matrix "weka.experiment.ResultMatrixPlainText -mean-prec 2 -stddev-prec 2 -col-name-width 0 -row-name-width 25 -mean-width 0 -stddev-width 0 -sig-width 0 -count-width 5 -print-col-names -print-row-names -enum-col-names"
+Analysing:  Percent_correct
+Datasets:   1
+Resultsets: 9
+Confidence: 0.05 (two tailed)
+Sorted by:  -
+Date:       2/4/21 17:46
+
+
+Dataset                   (1) rules.Ze | (2) trees (3) trees (4) trees (5) trees (6) trees (7) lazy. (8) funct (9) bayes
+------------------------------------------------------------------------------------------------------------------------
+'Pacman-data-training-wek(100)   37.72 |   68.92 v   74.10 v   77.72 v   76.86 v   69.23 v   71.89 v   81.59 v   57.89 v
+------------------------------------------------------------------------------------------------------------------------
+                               (v/ /*) |   (1/0/0)   (1/0/0)   (1/0/0)   (1/0/0)   (1/0/0)   (1/0/0)   (1/0/0)   (1/0/0)
+
+
+Key:
+(1) rules.ZeroR '' 48055541465867954
+(2) trees.Id3 '' -2693678647096322561
+(3) trees.J48 '-C 0.25 -M 2' -217733168393644444
+(4) trees.LMT '-I -1 -M 15 -W 0.0' -1113212459618104943
+(5) trees.RandomForest '-P 100 -I 100 -num-slots 1 -K 0 -M 1.0 -V 0.001 -S 1' 1116839470751428698
+(6) trees.RandomTree '-K 0 -M 1.0 -V 0.001 -S 1' -9051119597407396024
+(7) lazy.IBk '-K 1 -W 0 -A \"weka.core.neighboursearch.LinearNNSearch -A \\\"weka.core.EuclideanDistance -R first-last\\\"\"' -3080186098777067172
+(8) functions.MultilayerPerceptron '-L 0.3 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a' -5990607817048210779
+(9) bayes.NaiveBayes '' 5995231201785697655
+
