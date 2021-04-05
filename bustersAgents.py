@@ -3,6 +3,7 @@ import sys
 import random
 from distanceCalculator import Distancer
 from game import Actions
+
 # bustersAgents.py
 # ----------------
 # Licensing Information:  You are free to use or extend these projects for
@@ -26,6 +27,7 @@ from keyboardAgents import KeyboardAgent
 import inference
 import busters
 
+from wekaI import Weka
 
 class NullGraphics(object):
     "Placeholder for graphics"
@@ -86,6 +88,10 @@ class BustersAgent(object):
         self.observeEnable = observeEnable
         self.elapseTimeEnable = elapseTimeEnable
 
+        self.weka = Weka()          #CUSTOM
+        self.weka.start_jvm()       #CUSTOM
+
+
     def registerInitialState(self, gameState):
         "Initializes beliefs and inference modules"
         import __main__
@@ -116,8 +122,65 @@ class BustersAgent(object):
         return self.chooseAction(gameState)
 
     def chooseAction(self, gameState):
-        "By default, a BustersAgent just stops.  This should be overridden."
-        return Directions.STOP
+
+        x = []
+
+        if "North" in  gameState.getLegalPacmanActions():
+            x.append(True)
+        else:
+            x.append(False)
+
+        if "South" in  gameState.getLegalPacmanActions():
+            x.append(True)
+        else:
+            x.append(False)
+
+        if "East" in  gameState.getLegalPacmanActions():
+            x.append(True)
+        else:
+            x.append(False)
+
+        if "West" in  gameState.getLegalPacmanActions():
+            x.append(True)
+        else:
+            x.append(False)
+
+        #x.append(True)
+
+        # Pacman direction
+        x.append(gameState.data.agentStates[0].getDirection())
+
+        # Alive ghosts (index 0 corresponds to Pacman and is always false)
+        for livinGhost in gameState.getLivingGhosts()[1:]:
+            x.append(livinGhost)
+
+        # Ghosts positions
+        for i in range(0, gameState.getNumAgents()-1):
+            data = ','.join(map(str, gameState.getGhostPositions()[i]))
+            x.append(data)
+
+        # Ghosts directions
+        data = ','.join(map(str, [gameState.getGhostDirections().get(i) for i in range(0, gameState.getNumAgents() - 1)]))
+        x.append(data)
+
+        # Manhattan distance to ghosts
+        for ghostDistance in gameState.data.ghostDistances:
+            if ghostDistance == None:
+                x.append(-1)
+            x.append(ghostDistance)
+        
+        # Manhattan distance to the closest pac dot
+        if gameState.getDistanceNearestFood() == None:
+            x.append(-1)
+        else: 
+            x.append(gameState.getDistanceNearestFood())
+
+        #Last score
+        x.append(gameState.data.score)
+        print(x)
+
+        a = self.weka.predict("./models/Perceptron1.model", x, "./!new_era/classification/keyboard/training_keyboard.arff")
+        return a
    
     def printLineData(self, gameState, action, newGameState):
 
