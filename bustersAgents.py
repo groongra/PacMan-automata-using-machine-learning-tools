@@ -29,6 +29,7 @@ import busters
 
 from wekaI import Weka
 
+
 class NullGraphics(object):
     "Placeholder for graphics"
 
@@ -50,10 +51,12 @@ class NullGraphics(object):
     def finish(self):
         pass
 
+
 class KeyboardInference(inference.InferenceModule):
     """
     Basic inference module for use with the keyboard.
     """
+
     def initializeUniformly(self, gameState):
         "Begin with a uniform distribution over ghost positions."
         self.beliefs = util.Counter()
@@ -79,6 +82,7 @@ class KeyboardInference(inference.InferenceModule):
     def getBeliefDistribution(self):
         return self.beliefs
 
+
 class BustersAgent(object):
     "An agent that tracks and displays its beliefs about ghost positions."
 
@@ -88,9 +92,8 @@ class BustersAgent(object):
         self.observeEnable = observeEnable
         self.elapseTimeEnable = elapseTimeEnable
 
-        self.weka = Weka()          #CUSTOM
-        self.weka.start_jvm()       #CUSTOM
-
+        self.weka = Weka()  # CUSTOM
+        self.weka.start_jvm()  # CUSTOM
 
     def registerInitialState(self, gameState):
         "Initializes beliefs and inference modules"
@@ -125,30 +128,33 @@ class BustersAgent(object):
 
         x = []
 
-        if "North" in  gameState.getLegalPacmanActions():
+        for position in gameState.getPacmanPosition():
+            x.append(position)
+
+        if "North" in gameState.getLegalPacmanActions():
             x.append(True)
         else:
             x.append(False)
 
-        if "South" in  gameState.getLegalPacmanActions():
+        if "South" in gameState.getLegalPacmanActions():
             x.append(True)
         else:
             x.append(False)
 
-        if "East" in  gameState.getLegalPacmanActions():
+        if "East" in gameState.getLegalPacmanActions():
             x.append(True)
         else:
             x.append(False)
 
-        if "West" in  gameState.getLegalPacmanActions():
+        if "West" in gameState.getLegalPacmanActions():
             x.append(True)
         else:
             x.append(False)
 
-        #x.append(True)
+        # x.append(True)
 
-        # Pacman direction
-        x.append(gameState.data.agentStates[0].getDirection())
+        # Pacman direction !!!!!!
+        # x.append(gameState.data.agentStates[0].getDirection())
 
         # Alive ghosts (index 0 corresponds to Pacman and is always false)
         for livinGhost in gameState.getLivingGhosts()[1:]:
@@ -156,32 +162,34 @@ class BustersAgent(object):
 
         # Ghosts positions
         for i in range(0, gameState.getNumAgents()-1):
-            data = ','.join(map(str, gameState.getGhostPositions()[i]))
-            x.append(data)
+            for position in gameState.getGhostPositions()[i]:
+                x.append(position)
 
         # Ghosts directions
-        data = ','.join(map(str, [gameState.getGhostDirections().get(i) for i in range(0, gameState.getNumAgents() - 1)]))
-        x.append(data)
+        # for i in range(0, gameState.getNumAgents()-1):
+        #    x.append(gameState.getGhostDirections().get(i))
 
         # Manhattan distance to ghosts
         for ghostDistance in gameState.data.ghostDistances:
             if ghostDistance == None:
                 x.append(-1)
             x.append(ghostDistance)
-        
+
         # Manhattan distance to the closest pac dot
         if gameState.getDistanceNearestFood() == None:
             x.append(-1)
-        else: 
+        else:
             x.append(gameState.getDistanceNearestFood())
 
-        #Last score
+        # Last score
         x.append(gameState.data.score)
+
         print(x)
 
-        a = self.weka.predict("./models/Perceptron1.model", x, "./!new_era/classification/keyboard/training_keyboard.arff")
+        a = self.weka.predict("./try/Model.model", x,
+                              "./try/Training.arff")
         return a
-   
+
     def printLineData(self, gameState, action, newGameState):
 
         # Pacman position
@@ -191,34 +199,34 @@ class BustersAgent(object):
 
         # Legal actions for Pacman in current position
 
-        if "North" in  gameState.getLegalPacmanActions():
+        if "North" in gameState.getLegalPacmanActions():
             data = "True,"
         else:
             data = "False,"
 
-        if "South" in  gameState.getLegalPacmanActions():
+        if "South" in gameState.getLegalPacmanActions():
             data += "True,"
         else:
             data += "False,"
 
-        if "East" in  gameState.getLegalPacmanActions():
+        if "East" in gameState.getLegalPacmanActions():
             data += "True,"
         else:
             data += "False,"
 
-        if "West" in  gameState.getLegalPacmanActions():
+        if "West" in gameState.getLegalPacmanActions():
             data += "True,"
         else:
             data += "False,"
-        
-        data+= "True,"
-        msg+= data
+
+        data += "True,"
+        msg += data
 
         #msg += data+","
 
         # Pacman direction
         data = gameState.data.agentStates[0].getDirection()
-        #msg += "Pacman direction: " + data 
+        #msg += "Pacman direction: " + data
         msg += data+","
 
         # Alive ghosts (index 0 corresponds to Pacman and is always false)
@@ -232,7 +240,7 @@ class BustersAgent(object):
         # Ghosts positions
         for i in range(0, gameState.getNumAgents()-1):
             data = ','.join(map(str, gameState.getGhostPositions()[i]))
-            msg += data+"," 
+            msg += data+","
         # Ghosts directions
         data = ','.join(map(str, [gameState.getGhostDirections().get(
             i) for i in range(0, gameState.getNumAgents() - 1)]))
@@ -243,30 +251,32 @@ class BustersAgent(object):
             if ghostDistance == None:
                 ghostDistance = -1
             msg += str(ghostDistance)+","
-        
+
         #msg += "Ghosts distances: "+data+","
         #msg += data+","
         # Manhattan distance to the closest pac dot
         if gameState.getDistanceNearestFood() == None:
             msg += str(-1)+","
-        else: msg += str(gameState.getDistanceNearestFood())+","
+        else:
+            msg += str(gameState.getDistanceNearestFood())+","
         #msg += "Distance nearest pac dots: " + data
-        
-        #Last score
-        msg+=str(gameState.data.score)+","
 
-        #Next scoreChange
-        msg+=str(newGameState.data.scoreChange)+","
+        # Last score
+        msg += str(gameState.data.score)+","
 
-        #Last action
-        msg+= str(action)+","
-        
-        #Next score
-        msg+=str(newGameState.data.score)+"\n"
-        return msg  
+        # Next scoreChange
+        msg += str(newGameState.data.scoreChange)+","
+
+        # Last action
+        msg += str(action)+","
+
+        # Next score
+        msg += str(newGameState.data.score)+"\n"
+        return msg
+
 
 class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
-    
+
     "An agent controlled by the keyboard that displays beliefs about ghost positions."
 
     def __init__(self, index=0, inference="KeyboardInference", ghostAgents=None):
@@ -288,34 +298,34 @@ class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
 
         # Legal actions for Pacman in current position
 
-        if "North" in  gameState.getLegalPacmanActions():
+        if "North" in gameState.getLegalPacmanActions():
             data = "True,"
         else:
             data = "False,"
 
-        if "South" in  gameState.getLegalPacmanActions():
+        if "South" in gameState.getLegalPacmanActions():
             data += "True,"
         else:
             data += "False,"
 
-        if "East" in  gameState.getLegalPacmanActions():
+        if "East" in gameState.getLegalPacmanActions():
             data += "True,"
         else:
             data += "False,"
 
-        if "West" in  gameState.getLegalPacmanActions():
+        if "West" in gameState.getLegalPacmanActions():
             data += "True,"
         else:
             data += "False,"
-        
-        data+= "True,"
-        msg+= data
+
+        data += "True,"
+        msg += data
 
         #msg += data+","
 
         # Pacman direction
         data = gameState.data.agentStates[0].getDirection()
-        #msg += "Pacman direction: " + data 
+        #msg += "Pacman direction: " + data
         msg += data+","
 
         # Alive ghosts (index 0 corresponds to Pacman and is always false)
@@ -329,7 +339,7 @@ class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
         # Ghosts positions
         for i in range(0, gameState.getNumAgents()-1):
             data = ','.join(map(str, gameState.getGhostPositions()[i]))
-            msg += data+"," 
+            msg += data+","
         # Ghosts directions
         data = ','.join(map(str, [gameState.getGhostDirections().get(
             i) for i in range(0, gameState.getNumAgents() - 1)]))
@@ -340,27 +350,29 @@ class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
             if ghostDistance == None:
                 ghostDistance = -1
             msg += str(ghostDistance)+","
-        
+
         #msg += "Ghosts distances: "+data+","
         #msg += data+","
         # Manhattan distance to the closest pac dot
         if gameState.getDistanceNearestFood() == None:
             msg += str(-1)+","
-        else: msg += str(gameState.getDistanceNearestFood())+","
+        else:
+            msg += str(gameState.getDistanceNearestFood())+","
         #msg += "Distance nearest pac dots: " + data
-        
-        #Last score
-        msg+=str(gameState.data.score)+","
 
-        #Next scoreChange
-        msg+=str(newGameState.data.scoreChange)+","
+        # Last score
+        msg += str(gameState.data.score)+","
 
-        #Last action
-        msg+= str(action)+","
-        
-        #Next score
-        msg+=str(newGameState.data.score)+"\n"
-        return msg  
+        # Next scoreChange
+        msg += str(newGameState.data.scoreChange)+","
+
+        # Last action
+        msg += str(action)+","
+
+        # Next score
+        msg += str(newGameState.data.score)+"\n"
+        return msg
+
 
 class RandomPAgent(BustersAgent):
 
@@ -404,7 +416,7 @@ class RandomPAgent(BustersAgent):
         if (move_random == 3) and Directions.SOUTH in legal:
             move = Directions.SOUTH
         return move
-    
+
     def printLineData(self, gameState, action, newGameState):
 
         # Pacman position
@@ -414,34 +426,34 @@ class RandomPAgent(BustersAgent):
 
         # Legal actions for Pacman in current position
 
-        if "North" in  gameState.getLegalPacmanActions():
+        if "North" in gameState.getLegalPacmanActions():
             data = "True,"
         else:
             data = "False,"
 
-        if "South" in  gameState.getLegalPacmanActions():
+        if "South" in gameState.getLegalPacmanActions():
             data += "True,"
         else:
             data += "False,"
 
-        if "East" in  gameState.getLegalPacmanActions():
+        if "East" in gameState.getLegalPacmanActions():
             data += "True,"
         else:
             data += "False,"
 
-        if "West" in  gameState.getLegalPacmanActions():
+        if "West" in gameState.getLegalPacmanActions():
             data += "True,"
         else:
             data += "False,"
-        
-        data+= "True,"
-        msg+= data
+
+        data += "True,"
+        msg += data
 
         #msg += data+","
 
         # Pacman direction
         data = gameState.data.agentStates[0].getDirection()
-        #msg += "Pacman direction: " + data 
+        #msg += "Pacman direction: " + data
         msg += data+","
 
         # Alive ghosts (index 0 corresponds to Pacman and is always false)
@@ -455,7 +467,7 @@ class RandomPAgent(BustersAgent):
         # Ghosts positions
         for i in range(0, gameState.getNumAgents()-1):
             data = ','.join(map(str, gameState.getGhostPositions()[i]))
-            msg += data+"," 
+            msg += data+","
         # Ghosts directions
         data = ','.join(map(str, [gameState.getGhostDirections().get(
             i) for i in range(0, gameState.getNumAgents() - 1)]))
@@ -466,27 +478,29 @@ class RandomPAgent(BustersAgent):
             if ghostDistance == None:
                 ghostDistance = -1
             msg += str(ghostDistance)+","
-        
+
         #msg += "Ghosts distances: "+data+","
         #msg += data+","
         # Manhattan distance to the closest pac dot
         if gameState.getDistanceNearestFood() == None:
             msg += str(-1)+","
-        else: msg += str(gameState.getDistanceNearestFood())+","
+        else:
+            msg += str(gameState.getDistanceNearestFood())+","
         #msg += "Distance nearest pac dots: " + data
-        
-        #Last score
-        msg+=str(gameState.data.score)+","
 
-        #Next scoreChange
-        msg+=str(newGameState.data.scoreChange)+","
+        # Last score
+        msg += str(gameState.data.score)+","
 
-        #Last action
-        msg+= str(action)+","
-        
-        #Next score
-        msg+=str(newGameState.data.score)+"\n"
-        return msg  
+        # Next scoreChange
+        msg += str(newGameState.data.scoreChange)+","
+
+        # Last action
+        msg += str(action)+","
+
+        # Next score
+        msg += str(newGameState.data.score)+"\n"
+        return msg
+
 
 class GreedyBustersAgent(BustersAgent):
     "An agent that charges the closest ghost."
@@ -531,7 +545,7 @@ class GreedyBustersAgent(BustersAgent):
             [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
              if livingGhosts[i+1]]
         return Directions.EAST
-    
+
     def printLineData(self, gameState, action, newGameState):
 
         # Pacman position
@@ -541,34 +555,34 @@ class GreedyBustersAgent(BustersAgent):
 
         # Legal actions for Pacman in current position
 
-        if "North" in  gameState.getLegalPacmanActions():
+        if "North" in gameState.getLegalPacmanActions():
             data = "True,"
         else:
             data = "False,"
 
-        if "South" in  gameState.getLegalPacmanActions():
+        if "South" in gameState.getLegalPacmanActions():
             data += "True,"
         else:
             data += "False,"
 
-        if "East" in  gameState.getLegalPacmanActions():
+        if "East" in gameState.getLegalPacmanActions():
             data += "True,"
         else:
             data += "False,"
 
-        if "West" in  gameState.getLegalPacmanActions():
+        if "West" in gameState.getLegalPacmanActions():
             data += "True,"
         else:
             data += "False,"
-        
-        data+= "True,"
-        msg+= data
+
+        data += "True,"
+        msg += data
 
         #msg += data+","
 
         # Pacman direction
         data = gameState.data.agentStates[0].getDirection()
-        #msg += "Pacman direction: " + data 
+        #msg += "Pacman direction: " + data
         msg += data+","
 
         # Alive ghosts (index 0 corresponds to Pacman and is always false)
@@ -582,7 +596,7 @@ class GreedyBustersAgent(BustersAgent):
         # Ghosts positions
         for i in range(0, gameState.getNumAgents()-1):
             data = ','.join(map(str, gameState.getGhostPositions()[i]))
-            msg += data+"," 
+            msg += data+","
         # Ghosts directions
         data = ','.join(map(str, [gameState.getGhostDirections().get(
             i) for i in range(0, gameState.getNumAgents() - 1)]))
@@ -593,27 +607,29 @@ class GreedyBustersAgent(BustersAgent):
             if ghostDistance == None:
                 ghostDistance = -1
             msg += str(ghostDistance)+","
-        
+
         #msg += "Ghosts distances: "+data+","
         #msg += data+","
         # Manhattan distance to the closest pac dot
         if gameState.getDistanceNearestFood() == None:
             msg += str(-1)+","
-        else: msg += str(gameState.getDistanceNearestFood())+","
+        else:
+            msg += str(gameState.getDistanceNearestFood())+","
         #msg += "Distance nearest pac dots: " + data
-        
-        #Last score
-        msg+=str(gameState.data.score)+","
 
-        #Next scoreChange
-        msg+=str(newGameState.data.scoreChange)+","
+        # Last score
+        msg += str(gameState.data.score)+","
 
-        #Last action
-        msg+= str(action)+","
-        
-        #Next score
-        msg+=str(newGameState.data.score)+"\n"
-        return msg  
+        # Next scoreChange
+        msg += str(newGameState.data.scoreChange)+","
+
+        # Last action
+        msg += str(action)+","
+
+        # Next score
+        msg += str(newGameState.data.score)+"\n"
+        return msg
+
 
 class BasicAgentAA(BustersAgent):
 
@@ -681,7 +697,7 @@ class BasicAgentAA(BustersAgent):
         print("Score: ", gameState.getScore())
 
     def chooseAction(self, gameState):
-    
+
         self.countActions = self.countActions + 1
         # self.printInfo(gameState)
 
@@ -708,18 +724,19 @@ class BasicAgentAA(BustersAgent):
 
         else:  # Move twoards Ghost'''
 
-        ghostPosition = gameState.getGhostPositions()[ghostsDistances.index(minGhostsDistance)]
+        ghostPosition = gameState.getGhostPositions(
+        )[ghostsDistances.index(minGhostsDistance)]
         validMovements = gameState.getLegalPacmanActions()
         pacPosition = gameState.getPacmanPosition()
         xDistanceToGhost = abs(ghostPosition[0] - pacPosition[0])
         yDistanceToGhost = abs(ghostPosition[1] - pacPosition[1])
         prevMove = gameState.data.agentStates[0].getDirection()
         x, y = gameState.getPacmanPosition()
-        print("$",prevMove)
+        print("$", prevMove)
         if(len(validMovements) == 5 and not gameState.getWalls()[x+1][y+1] and not gameState.getWalls()[x+1][y-1] and not gameState.getWalls()[x-1][y+1] and not gameState.getWalls()[x-1][y-1]):
             print("LIBRE")
-        
-            if(xDistanceToGhost>yDistanceToGhost):
+
+            if(xDistanceToGhost > yDistanceToGhost):
 
                 if(ghostPosition[0] > pacPosition[0]):
                     move = Directions.EAST
@@ -731,27 +748,27 @@ class BasicAgentAA(BustersAgent):
                 else:
                     move = Directions.SOUTH
         else:
-            #EJE X
-            if(xDistanceToGhost>yDistanceToGhost):
-                #PREFERENCIA ESTE
+            # EJE X
+            if(xDistanceToGhost > yDistanceToGhost):
+                # PREFERENCIA ESTE
                 if(ghostPosition[0] > pacPosition[0]):
                     '''if((prevMove==Directions.NORTH or prevMove==Directions.SOUTH) and not gameState.getWalls()[x+1][y] and Directions.EAST in legal): 
                         move = Directions.EAST
                         print("OBSTACULO ESTE - BORDEANDO FIN")'''
-                    
-                    if(prevMove==Directions.WEST and (not gameState.getWalls()[x][y+1] or not gameState.getWalls()[x][y-1])):
+
+                    if(prevMove == Directions.WEST and (not gameState.getWalls()[x][y+1] or not gameState.getWalls()[x][y-1])):
                         print("OBSTACULO NORTE/SUR - BORDEANDO FIN")
                         move_random = random.randint(0, 1)
                         if (move_random == 0) and Directions.NORTH in legal:
                             move = Directions.NORTH
                         elif (move_random == 1) and Directions.SOUTH in legal:
-                            move = Directions.SOUTH          
+                            move = Directions.SOUTH
 
-                    elif(prevMove==Directions.NORTH and gameState.getWalls()[x+1][y]and Directions.NORTH in legal): 
+                    elif(prevMove == Directions.NORTH and gameState.getWalls()[x+1][y] and Directions.NORTH in legal):
                         move = Directions.NORTH
                         print("OBSTACULO ESTE - BORDEANDO ARRIBA")
-                    
-                    elif(prevMove==Directions.SOUTH and gameState.getWalls()[x+1][y] and Directions.SOUTH in legal): 
+
+                    elif(prevMove == Directions.SOUTH and gameState.getWalls()[x+1][y] and Directions.SOUTH in legal):
                         move = Directions.SOUTH
                         print("OBSTACULO ESTE - BORDEANDO ABAJO")
 
@@ -766,45 +783,44 @@ class BasicAgentAA(BustersAgent):
                             up += 1
                         goUp = y - down > up - y
 
-                        print("y    ",y)
-                        print("up    ",up)
-                        print("down    ",down)
+                        print("y    ", y)
+                        print("up    ", up)
+                        print("down    ", down)
 
                         if((y-down == 0 or goUp or Directions.SOUTH not in legal) and Directions.NORTH in legal):
                             move = Directions.NORTH
-                        elif((up+y == gameState.data.layout.height or not goUp or Directions.NORTH not in legal)and Directions.SOUTH in legal):
+                        elif((up+y == gameState.data.layout.height or not goUp or Directions.NORTH not in legal) and Directions.SOUTH in legal):
                             move = Directions.SOUTH
                         elif(Directions.WEST in legal):
-                             move = Directions.WEST
+                            move = Directions.WEST
                     else:
                         print("PREFERENCIA ESTE")
                         move = Directions.EAST
-                        
 
-                #PREFERENCIA OSTE
+                # PREFERENCIA OSTE
                 else:
                     '''if((prevMove==Directions.NORTH or prevMove==Directions.SOUTH) and not gameState.getWalls()[x-1][y] and Directions.WEST in legal): 
                         move = Directions.WEST
                         print("OBSTACULO OESTE - BORDEANDO FIN")'''
-                                   
-                    if(prevMove==Directions.EAST and (not gameState.getWalls()[x][y+1] or not gameState.getWalls()[x][y-1])):
+
+                    if(prevMove == Directions.EAST and (not gameState.getWalls()[x][y+1] or not gameState.getWalls()[x][y-1])):
                         print("OBSTACULO NORTE/SUR - BORDEANDO FIN")
                         move_random = random.randint(0, 1)
                         if (move_random == 0) and Directions.NORTH in legal:
                             move = Directions.NORTH
                         elif (move_random == 1) and Directions.SOUTH in legal:
-                            move = Directions.SOUTH          
-                    elif(prevMove==Directions.NORTH and gameState.getWalls()[x-1][y] and Directions.NORTH) in legal: 
+                            move = Directions.SOUTH
+                    elif(prevMove == Directions.NORTH and gameState.getWalls()[x-1][y] and Directions.NORTH) in legal:
                         move = Directions.NORTH
                         print("OBSTACULO OESTE - BORDEANDO ARRIBA")
-                    
-                    elif(prevMove==Directions.SOUTH and gameState.getWalls()[x-1][y] and Directions.SOUTH in legal): 
+
+                    elif(prevMove == Directions.SOUTH and gameState.getWalls()[x-1][y] and Directions.SOUTH in legal):
                         move = Directions.SOUTH
                         print("OBSTACULO OESTE - BORDEANDO ABAJO")
-                    
+
                     elif(Directions.WEST not in legal):
                         print("OBSTACULO OESTE")
-                        down = y 
+                        down = y
                         up = y
                         while down > 0 and gameState.getWalls()[x-1][down]:
                             down -= 1
@@ -812,39 +828,39 @@ class BasicAgentAA(BustersAgent):
                         while up < gameState.data.layout.height and gameState.getWalls()[x-1][up]:
                             up += 1
                         goUp = y - down > up - y
-                        if((y-down==0 or goUp or Directions.SOUTH not in legal) and Directions.NORTH in legal):
+                        if((y-down == 0 or goUp or Directions.SOUTH not in legal) and Directions.NORTH in legal):
                             move = Directions.NORTH
                         elif((up+y == gameState.data.layout.height or not goUp or Directions.NORTH not in legal) and Directions.SOUTH in legal):
                             move = Directions.SOUTH
                         elif(Directions.EAST in legal):
-                             move = Directions.EAST
+                            move = Directions.EAST
 
                     else:
                         move = Directions.WEST
                         print("PREFERENCIA OESTE")
-            
-            #EJE Y    
+
+            # EJE Y
             else:
-                #PREFERENCIA NORTE
+                # PREFERENCIA NORTE
                 if(ghostPosition[1] > pacPosition[1]):
 
                     '''if((prevMove==Directions.EAST or prevMove==Directions.WEST) and not gameState.getWalls()[x][y+1] and Directions.NORTH in legal): 
                         move = Directions.NORTH
                         print("OBSTACULO NORTE - BORDEANDO FIN")'''
-                                                    
-                    if(prevMove==Directions.SOUTH and (not gameState.getWalls()[x-1][y] or not gameState.getWalls()[x+1][y])):
+
+                    if(prevMove == Directions.SOUTH and (not gameState.getWalls()[x-1][y] or not gameState.getWalls()[x+1][y])):
                         print("OBSTACULO ESTE/OESTE - BORDEANDO FIN")
                         move_random = random.randint(0, 1)
                         if (move_random == 0) and Directions.WEST in legal:
                             move = Directions.WEST
                         elif (move_random == 1) and Directions.EAST in legal:
-                            move = Directions.EAST          
+                            move = Directions.EAST
 
-                    elif(prevMove==Directions.EAST and gameState.getWalls()[x][y+1] and Directions.EAST in legal): 
+                    elif(prevMove == Directions.EAST and gameState.getWalls()[x][y+1] and Directions.EAST in legal):
                         move = Directions.EAST
                         print("OBSTACULO NORTE - BORDEANDO DER")
-                    
-                    elif(prevMove==Directions.WEST and gameState.getWalls()[x][y+1] and Directions.WEST in legal): 
+
+                    elif(prevMove == Directions.WEST and gameState.getWalls()[x][y+1] and Directions.WEST in legal):
                         move = Directions.WEST
                         print("OBSTACULO NORTE - BORDEANDO IZQ")
 
@@ -858,41 +874,41 @@ class BasicAgentAA(BustersAgent):
 
                         while right < gameState.data.layout.width and gameState.getWalls()[right][y+1]:
                             right += 1
-                        
+
                         goLeft = x - left < right - x
 
-                        if((x+right==gameState.data.layout.width or goLeft or Directions.EAST not in legal) and Directions.WEST in legal):
+                        if((x+right == gameState.data.layout.width or goLeft or Directions.EAST not in legal) and Directions.WEST in legal):
                             move = Directions.WEST
-                        elif((x-left==0 or not goLeft or Directions.WEST not in legal) and Directions.EAST in legal):
+                        elif((x-left == 0 or not goLeft or Directions.WEST not in legal) and Directions.EAST in legal):
                             move = Directions.EAST
                         elif(Directions.SOUTH in legal):
-                             move = Directions.SOUTH
+                            move = Directions.SOUTH
                     else:
                         move = Directions.NORTH
                         print("PREFERENCIA NORTE")
-                            
-                #PREFERENCIA SUR
+
+                # PREFERENCIA SUR
                 else:
 
                     '''if((prevMove==Directions.EAST or prevMove==Directions.WEST) and not gameState.getWalls()[x][y-1] and Directions.SOUTH in legal): 
                     move = Directions.SOUTH
                     print("OBSTACULO SUR - BORDEANDO FIN")'''
 
-                    if(prevMove==Directions.NORTH and (not gameState.getWalls()[x-1][y] or not gameState.getWalls()[x+1][y])):
+                    if(prevMove == Directions.NORTH and (not gameState.getWalls()[x-1][y] or not gameState.getWalls()[x+1][y])):
                         print("OBSTACULO ESTE/OESTE - BORDEANDO FIN")
                         move_random = random.randint(0, 1)
                         if (move_random == 0) and Directions.WEST in legal:
                             move = Directions.WEST
                         elif (move_random == 1) and Directions.EAST in legal:
-                            move = Directions.EAST                     
-                        
-                    elif(prevMove==Directions.EAST and gameState.getWalls()[x][y-1] and Directions.EAST in legal): 
+                            move = Directions.EAST
+
+                    elif(prevMove == Directions.EAST and gameState.getWalls()[x][y-1] and Directions.EAST in legal):
                         move = Directions.EAST
                         print("OBSTACULO SUR - BORDEANDO DER")
-                    elif(prevMove==Directions.WEST and gameState.getWalls()[x][y-1] and Directions.WEST in legal): 
+                    elif(prevMove == Directions.WEST and gameState.getWalls()[x][y-1] and Directions.WEST in legal):
                         move = Directions.WEST
                         print("OBSTACULO SUR - BORDEANDO IZQ")
-                    
+
                     elif(Directions.SOUTH not in legal):
                         print("OBSTACULO SUR")
                         left = x
@@ -904,18 +920,18 @@ class BasicAgentAA(BustersAgent):
                             right += 1
                         goLeft = x - left < right - x
 
-                        if((x+right==gameState.data.layout.width or goLeft or Directions.EAST not in legal) and Directions.WEST in legal):
+                        if((x+right == gameState.data.layout.width or goLeft or Directions.EAST not in legal) and Directions.WEST in legal):
                             move = Directions.WEST
-                        elif((x-left==0 or not goLeft or Directions.WEST not in legal) and Directions.EAST in legal):
+                        elif((x-left == 0 or not goLeft or Directions.WEST not in legal) and Directions.EAST in legal):
                             move = Directions.EAST
                         elif(Directions.NORTH in legal):
-                             move = Directions.NORTH
+                            move = Directions.NORTH
                     else:
                         move = Directions.SOUTH
                         print("PREFERENCIA SUR")
-        
-        print(">",move)
-    
+
+        print(">", move)
+
         return move
 
     def printLineData(self, gameState, action, newGameState):
@@ -927,34 +943,34 @@ class BasicAgentAA(BustersAgent):
 
         # Legal actions for Pacman in current position
 
-        if "North" in  gameState.getLegalPacmanActions():
+        if "North" in gameState.getLegalPacmanActions():
             data = "True,"
         else:
             data = "False,"
 
-        if "South" in  gameState.getLegalPacmanActions():
+        if "South" in gameState.getLegalPacmanActions():
             data += "True,"
         else:
             data += "False,"
 
-        if "East" in  gameState.getLegalPacmanActions():
+        if "East" in gameState.getLegalPacmanActions():
             data += "True,"
         else:
             data += "False,"
 
-        if "West" in  gameState.getLegalPacmanActions():
+        if "West" in gameState.getLegalPacmanActions():
             data += "True,"
         else:
             data += "False,"
-        
-        data+= "True,"
-        msg+= data
+
+        data += "True,"
+        msg += data
 
         #msg += data+","
 
         # Pacman direction
         data = gameState.data.agentStates[0].getDirection()
-        #msg += "Pacman direction: " + data 
+        #msg += "Pacman direction: " + data
         msg += data+","
 
         # Alive ghosts (index 0 corresponds to Pacman and is always false)
@@ -968,7 +984,7 @@ class BasicAgentAA(BustersAgent):
         # Ghosts positions
         for i in range(0, gameState.getNumAgents()-1):
             data = ','.join(map(str, gameState.getGhostPositions()[i]))
-            msg += data+"," 
+            msg += data+","
         # Ghosts directions
         data = ','.join(map(str, [gameState.getGhostDirections().get(
             i) for i in range(0, gameState.getNumAgents() - 1)]))
@@ -979,24 +995,25 @@ class BasicAgentAA(BustersAgent):
             if ghostDistance == None:
                 ghostDistance = -1
             msg += str(ghostDistance)+","
-        
+
         #msg += "Ghosts distances: "+data+","
         #msg += data+","
         # Manhattan distance to the closest pac dot
         if gameState.getDistanceNearestFood() == None:
             msg += str(-1)+","
-        else: msg += str(gameState.getDistanceNearestFood())+","
+        else:
+            msg += str(gameState.getDistanceNearestFood())+","
         #msg += "Distance nearest pac dots: " + data
-        
-        #Last score
-        msg+=str(gameState.data.score)+","
 
-        #Next scoreChange
-        msg+=str(newGameState.data.scoreChange)+","
+        # Last score
+        msg += str(gameState.data.score)+","
 
-        #Last action
-        msg+= str(action)+","
-        
-        #Next score
-        msg+=str(newGameState.data.score)+"\n"
-        return msg  
+        # Next scoreChange
+        msg += str(newGameState.data.scoreChange)+","
+
+        # Last action
+        msg += str(action)+","
+
+        # Next score
+        msg += str(newGameState.data.score)+"\n"
+        return msg
