@@ -125,49 +125,42 @@ class BustersAgent(object):
         return self.chooseAction(gameState)
 
     def chooseAction(self, gameState):
-
+        legal = gameState.getLegalActions(0)
         x = []
 
+        # Positions
         for position in gameState.getPacmanPosition():
             x.append(position)
 
+        # Valid movements
         if "North" in gameState.getLegalPacmanActions():
-            x.append(True)
+            x.append(str(True))
         else:
-            x.append(False)
+            x.append(str(False))
 
         if "South" in gameState.getLegalPacmanActions():
-            x.append(True)
+            x.append(str(True))
         else:
-            x.append(False)
+            x.append(str(False))
 
         if "East" in gameState.getLegalPacmanActions():
-            x.append(True)
+            x.append(str(True))
         else:
-            x.append(False)
+            x.append(str(False))
 
         if "West" in gameState.getLegalPacmanActions():
-            x.append(True)
+            x.append(str(True))
         else:
-            x.append(False)
-
-        # x.append(True)
-
-        # Pacman direction !!!!!!
-        # x.append(gameState.data.agentStates[0].getDirection())
+            x.append(str(False))
 
         # Alive ghosts (index 0 corresponds to Pacman and is always false)
         for livinGhost in gameState.getLivingGhosts()[1:]:
-            x.append(livinGhost)
+            x.append(str(livinGhost))
 
         # Ghosts positions
         for i in range(0, gameState.getNumAgents()-1):
             for position in gameState.getGhostPositions()[i]:
                 x.append(position)
-
-        # Ghosts directions
-        # for i in range(0, gameState.getNumAgents()-1):
-        #    x.append(gameState.getGhostDirections().get(i))
 
         # Manhattan distance to ghosts
         for ghostDistance in gameState.data.ghostDistances:
@@ -185,16 +178,36 @@ class BustersAgent(object):
         x.append(gameState.data.score)
 
         print(x)
+        '''x.append(Prediction)'''
+
+        a = self.weka.predict("./try/simpleModel.model", x,
+                              "./try/simpleTrainning.arff")
+        if a not in legal:
+            return Directions.STOP
+        else:
+            return a
+        '''x = []
+
+        # x.append(True)
+
+        # Pacman direction !!!!!!
+        # x.append(gameState.data.agentStates[0].getDirection())
+
+        # Ghosts directions
+        # for i in range(0, gameState.getNumAgents()-1):
+        #    x.append(gameState.getGhostDirections().get(i))
+
+        print(x)
 
         a = self.weka.predict("./try/Model.model", x,
                               "./try/Training.arff")
-        return a
+        return a'''
 
     def printLineData(self, gameState, action, newGameState):
 
         # Pacman position
         data = ','.join(map(str, gameState.getPacmanPosition()))
-        #msg = "Pacman position:"+data+","
+        # msg = "Pacman position:"+data+","
         msg = data+","
 
         # Legal actions for Pacman in current position
@@ -222,20 +235,20 @@ class BustersAgent(object):
         data += "True,"
         msg += data
 
-        #msg += data+","
+        # msg += data+","
 
         # Pacman direction
         data = gameState.data.agentStates[0].getDirection()
-        #msg += "Pacman direction: " + data
+        # msg += "Pacman direction: " + data
         msg += data+","
 
         # Alive ghosts (index 0 corresponds to Pacman and is always false)
         for livinGhost in gameState.getLivingGhosts()[1:]:
 
             msg += str(livinGhost)+","
-        #data = ','.join(map(str, gameState.getLivingGhosts()))
-        #msg += "Living ghosts: "+data+","
-        #msg += data+","
+        # data = ','.join(map(str, gameState.getLivingGhosts()))
+        # msg += "Living ghosts: "+data+","
+        # msg += data+","
 
         # Ghosts positions
         for i in range(0, gameState.getNumAgents()-1):
@@ -244,7 +257,7 @@ class BustersAgent(object):
         # Ghosts directions
         data = ','.join(map(str, [gameState.getGhostDirections().get(
             i) for i in range(0, gameState.getNumAgents() - 1)]))
-        #msg += "Ghosts directions: "+data+","
+        # msg += "Ghosts directions: "+data+","
         msg += data+","
         # Manhattan distance to ghosts
         for ghostDistance in gameState.data.ghostDistances:
@@ -252,14 +265,14 @@ class BustersAgent(object):
                 ghostDistance = -1
             msg += str(ghostDistance)+","
 
-        #msg += "Ghosts distances: "+data+","
-        #msg += data+","
+        # msg += "Ghosts distances: "+data+","
+        # msg += data+","
         # Manhattan distance to the closest pac dot
         if gameState.getDistanceNearestFood() == None:
             msg += str(-1)+","
         else:
             msg += str(gameState.getDistanceNearestFood())+","
-        #msg += "Distance nearest pac dots: " + data
+        # msg += "Distance nearest pac dots: " + data
 
         # Last score
         msg += str(gameState.data.score)+","
@@ -273,6 +286,9 @@ class BustersAgent(object):
         # Next score
         msg += str(newGameState.data.score)+"\n"
         return msg
+
+    def __del__(self):  # Destructor de python
+        self.weka.stop_jvm()    # CUSTOM
 
 
 class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
@@ -293,7 +309,7 @@ class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
 
         # Pacman position
         data = ','.join(map(str, gameState.getPacmanPosition()))
-        #msg = "Pacman position:"+data+","
+        # msg = "Pacman position:"+data+","
         msg = data+","
 
         # Legal actions for Pacman in current position
@@ -321,20 +337,20 @@ class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
         data += "True,"
         msg += data
 
-        #msg += data+","
+        # msg += data+","
 
         # Pacman direction
         data = gameState.data.agentStates[0].getDirection()
-        #msg += "Pacman direction: " + data
+        # msg += "Pacman direction: " + data
         msg += data+","
 
         # Alive ghosts (index 0 corresponds to Pacman and is always false)
         for livinGhost in gameState.getLivingGhosts()[1:]:
 
             msg += str(livinGhost)+","
-        #data = ','.join(map(str, gameState.getLivingGhosts()))
-        #msg += "Living ghosts: "+data+","
-        #msg += data+","
+        # data = ','.join(map(str, gameState.getLivingGhosts()))
+        # msg += "Living ghosts: "+data+","
+        # msg += data+","
 
         # Ghosts positions
         for i in range(0, gameState.getNumAgents()-1):
@@ -343,7 +359,7 @@ class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
         # Ghosts directions
         data = ','.join(map(str, [gameState.getGhostDirections().get(
             i) for i in range(0, gameState.getNumAgents() - 1)]))
-        #msg += "Ghosts directions: "+data+","
+        # msg += "Ghosts directions: "+data+","
         msg += data+","
         # Manhattan distance to ghosts
         for ghostDistance in gameState.data.ghostDistances:
@@ -351,14 +367,14 @@ class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
                 ghostDistance = -1
             msg += str(ghostDistance)+","
 
-        #msg += "Ghosts distances: "+data+","
-        #msg += data+","
+        # msg += "Ghosts distances: "+data+","
+        # msg += data+","
         # Manhattan distance to the closest pac dot
         if gameState.getDistanceNearestFood() == None:
             msg += str(-1)+","
         else:
             msg += str(gameState.getDistanceNearestFood())+","
-        #msg += "Distance nearest pac dots: " + data
+        # msg += "Distance nearest pac dots: " + data
 
         # Last score
         msg += str(gameState.data.score)+","
@@ -421,7 +437,7 @@ class RandomPAgent(BustersAgent):
 
         # Pacman position
         data = ','.join(map(str, gameState.getPacmanPosition()))
-        #msg = "Pacman position:"+data+","
+        # msg = "Pacman position:"+data+","
         msg = data+","
 
         # Legal actions for Pacman in current position
@@ -449,20 +465,20 @@ class RandomPAgent(BustersAgent):
         data += "True,"
         msg += data
 
-        #msg += data+","
+        # msg += data+","
 
         # Pacman direction
         data = gameState.data.agentStates[0].getDirection()
-        #msg += "Pacman direction: " + data
+        # msg += "Pacman direction: " + data
         msg += data+","
 
         # Alive ghosts (index 0 corresponds to Pacman and is always false)
         for livinGhost in gameState.getLivingGhosts()[1:]:
 
             msg += str(livinGhost)+","
-        #data = ','.join(map(str, gameState.getLivingGhosts()))
-        #msg += "Living ghosts: "+data+","
-        #msg += data+","
+        # data = ','.join(map(str, gameState.getLivingGhosts()))
+        # msg += "Living ghosts: "+data+","
+        # msg += data+","
 
         # Ghosts positions
         for i in range(0, gameState.getNumAgents()-1):
@@ -471,7 +487,7 @@ class RandomPAgent(BustersAgent):
         # Ghosts directions
         data = ','.join(map(str, [gameState.getGhostDirections().get(
             i) for i in range(0, gameState.getNumAgents() - 1)]))
-        #msg += "Ghosts directions: "+data+","
+        # msg += "Ghosts directions: "+data+","
         msg += data+","
         # Manhattan distance to ghosts
         for ghostDistance in gameState.data.ghostDistances:
@@ -479,14 +495,14 @@ class RandomPAgent(BustersAgent):
                 ghostDistance = -1
             msg += str(ghostDistance)+","
 
-        #msg += "Ghosts distances: "+data+","
-        #msg += data+","
+        # msg += "Ghosts distances: "+data+","
+        # msg += data+","
         # Manhattan distance to the closest pac dot
         if gameState.getDistanceNearestFood() == None:
             msg += str(-1)+","
         else:
             msg += str(gameState.getDistanceNearestFood())+","
-        #msg += "Distance nearest pac dots: " + data
+        # msg += "Distance nearest pac dots: " + data
 
         # Last score
         msg += str(gameState.data.score)+","
@@ -550,7 +566,7 @@ class GreedyBustersAgent(BustersAgent):
 
         # Pacman position
         data = ','.join(map(str, gameState.getPacmanPosition()))
-        #msg = "Pacman position:"+data+","
+        # msg = "Pacman position:"+data+","
         msg = data+","
 
         # Legal actions for Pacman in current position
@@ -578,20 +594,20 @@ class GreedyBustersAgent(BustersAgent):
         data += "True,"
         msg += data
 
-        #msg += data+","
+        # msg += data+","
 
         # Pacman direction
         data = gameState.data.agentStates[0].getDirection()
-        #msg += "Pacman direction: " + data
+        # msg += "Pacman direction: " + data
         msg += data+","
 
         # Alive ghosts (index 0 corresponds to Pacman and is always false)
         for livinGhost in gameState.getLivingGhosts()[1:]:
 
             msg += str(livinGhost)+","
-        #data = ','.join(map(str, gameState.getLivingGhosts()))
-        #msg += "Living ghosts: "+data+","
-        #msg += data+","
+        # data = ','.join(map(str, gameState.getLivingGhosts()))
+        # msg += "Living ghosts: "+data+","
+        # msg += data+","
 
         # Ghosts positions
         for i in range(0, gameState.getNumAgents()-1):
@@ -600,7 +616,7 @@ class GreedyBustersAgent(BustersAgent):
         # Ghosts directions
         data = ','.join(map(str, [gameState.getGhostDirections().get(
             i) for i in range(0, gameState.getNumAgents() - 1)]))
-        #msg += "Ghosts directions: "+data+","
+        # msg += "Ghosts directions: "+data+","
         msg += data+","
         # Manhattan distance to ghosts
         for ghostDistance in gameState.data.ghostDistances:
@@ -608,14 +624,14 @@ class GreedyBustersAgent(BustersAgent):
                 ghostDistance = -1
             msg += str(ghostDistance)+","
 
-        #msg += "Ghosts distances: "+data+","
-        #msg += data+","
+        # msg += "Ghosts distances: "+data+","
+        # msg += data+","
         # Manhattan distance to the closest pac dot
         if gameState.getDistanceNearestFood() == None:
             msg += str(-1)+","
         else:
             msg += str(gameState.getDistanceNearestFood())+","
-        #msg += "Distance nearest pac dots: " + data
+        # msg += "Distance nearest pac dots: " + data
 
         # Last score
         msg += str(gameState.data.score)+","
@@ -708,21 +724,6 @@ class BasicAgentAA(BustersAgent):
         ghostsDistances = gameState.data.ghostDistances
 
         minGhostsDistance = min(x for x in ghostsDistances if x is not None)
-
-        '''if(gameState.getDistanceNearestFood() is not None and minGhostsDistance > gameState.getDistanceNearestFood()):  # Move twoards nearst dot
-        print("Pacdots")
-            move_random = random.randint(0, 3)
-            if (move_random == 0) and Directions.WEST in legal:
-                move = Directions.WEST
-            if (move_random == 1) and Directions.EAST in legal:
-                move = Directions.EAST
-            if (move_random == 2) and Directions.NORTH in legal:
-                move = Directions.NORTH
-            if (move_random == 3) and Directions.SOUTH in legal:
-                move = Directions.SOUTH
-            
-
-        else:  # Move twoards Ghost'''
 
         ghostPosition = gameState.getGhostPositions(
         )[ghostsDistances.index(minGhostsDistance)]
@@ -938,7 +939,7 @@ class BasicAgentAA(BustersAgent):
 
         # Pacman position
         data = ','.join(map(str, gameState.getPacmanPosition()))
-        #msg = "Pacman position:"+data+","
+        # msg = "Pacman position:"+data+","
         msg = data+","
 
         # Legal actions for Pacman in current position
@@ -966,20 +967,20 @@ class BasicAgentAA(BustersAgent):
         data += "True,"
         msg += data
 
-        #msg += data+","
+        # msg += data+","
 
         # Pacman direction
         data = gameState.data.agentStates[0].getDirection()
-        #msg += "Pacman direction: " + data
+        # msg += "Pacman direction: " + data
         msg += data+","
 
         # Alive ghosts (index 0 corresponds to Pacman and is always false)
         for livinGhost in gameState.getLivingGhosts()[1:]:
 
             msg += str(livinGhost)+","
-        #data = ','.join(map(str, gameState.getLivingGhosts()))
-        #msg += "Living ghosts: "+data+","
-        #msg += data+","
+        # data = ','.join(map(str, gameState.getLivingGhosts()))
+        # msg += "Living ghosts: "+data+","
+        # msg += data+","
 
         # Ghosts positions
         for i in range(0, gameState.getNumAgents()-1):
@@ -988,7 +989,7 @@ class BasicAgentAA(BustersAgent):
         # Ghosts directions
         data = ','.join(map(str, [gameState.getGhostDirections().get(
             i) for i in range(0, gameState.getNumAgents() - 1)]))
-        #msg += "Ghosts directions: "+data+","
+        # msg += "Ghosts directions: "+data+","
         msg += data+","
         # Manhattan distance to ghosts
         for ghostDistance in gameState.data.ghostDistances:
@@ -996,14 +997,14 @@ class BasicAgentAA(BustersAgent):
                 ghostDistance = -1
             msg += str(ghostDistance)+","
 
-        #msg += "Ghosts distances: "+data+","
-        #msg += data+","
+        # msg += "Ghosts distances: "+data+","
+        # msg += data+","
         # Manhattan distance to the closest pac dot
         if gameState.getDistanceNearestFood() == None:
             msg += str(-1)+","
         else:
             msg += str(gameState.getDistanceNearestFood())+","
-        #msg += "Distance nearest pac dots: " + data
+        # msg += "Distance nearest pac dots: " + data
 
         # Last score
         msg += str(gameState.data.score)+","
