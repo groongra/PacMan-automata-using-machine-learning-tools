@@ -153,6 +153,9 @@ class BustersAgent(object):
         else:
             x.append(str(False))
 
+        # Pacman direction
+        x.append(gameState.data.agentStates[0].getDirection())
+
         # Alive ghosts (index 0 corresponds to Pacman and is always false)
         for livinGhost in gameState.getLivingGhosts()[1:]:
             x.append(str(livinGhost))
@@ -162,11 +165,20 @@ class BustersAgent(object):
             for position in gameState.getGhostPositions()[i]:
                 x.append(position)
 
+        # Ghosts directions
+        for i in range(0, gameState.getNumAgents()-1):
+            if(gameState.getGhostDirections().get(i) == None):
+                x.append('Stop')
+                print(gameState.getGhostDirections().get(i))
+            else:
+                x.append(gameState.getGhostDirections().get(i))
+
         # Manhattan distance to ghosts
         for ghostDistance in gameState.data.ghostDistances:
             if ghostDistance == None:
                 x.append(-1)
-            x.append(ghostDistance)
+            else:
+                x.append(ghostDistance)
 
         # Manhattan distance to the closest pac dot
         if gameState.getDistanceNearestFood() == None:
@@ -178,30 +190,13 @@ class BustersAgent(object):
         x.append(gameState.data.score)
 
         print(x)
-        '''x.append(Prediction)'''
 
-        a = self.weka.predict("./try/simpleModel.model", x,
-                              "./try/simpleTrainning.arff")
+        a = self.weka.predict("./try/model.model", x,
+                              "./try/modelTraining.arff")
         if a not in legal:
             return Directions.STOP
         else:
             return a
-        '''x = []
-
-        # x.append(True)
-
-        # Pacman direction !!!!!!
-        # x.append(gameState.data.agentStates[0].getDirection())
-
-        # Ghosts directions
-        # for i in range(0, gameState.getNumAgents()-1):
-        #    x.append(gameState.getGhostDirections().get(i))
-
-        print(x)
-
-        a = self.weka.predict("./try/Model.model", x,
-                              "./try/Training.arff")
-        return a'''
 
     def printLineData(self, gameState, action, newGameState):
 
