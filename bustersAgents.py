@@ -158,12 +158,12 @@ class BustersAgent(object):
 
         # Alive ghosts (index 0 corresponds to Pacman and is always false)
         # for livinGhost in gameState.getLivingGhosts()[1:]:
-        #     x.append(str(livinGhost))
+        #    x.append(str(livinGhost))
 
         # Ghosts positions
-        # for i in range(0, gameState.getNumAgents()-1):
-        #    for position in gameState.getGhostPositions()[i]:
-        #        x.append(position)
+        for i in range(0, gameState.getNumAgents()-1):
+            for position in gameState.getGhostPositions()[i]:
+                x.append(position)
 
         # Ghosts directions
         # for i in range(0, gameState.getNumAgents()-1):
@@ -173,25 +173,29 @@ class BustersAgent(object):
         #        x.append(gameState.getGhostDirections().get(i))
 
         # Manhattan distance to ghosts
-        # for ghostDistance in gameState.data.ghostDistances:
-        #    if ghostDistance == None:
-        #        x.append(-1)
-        #    else:
-        #        x.append(ghostDistance)
+        for ghostDistance in gameState.data.ghostDistances:
+            if ghostDistance == None:
+                x.append(-1)
+            else:
+                x.append(ghostDistance)
 
         # Manhattan distance to the closest pac dot
         # if gameState.getDistanceNearestFood() == None:
         #    x.append(-1)
         # else:
-        #    x.append(gameState.getDistanceNearestFood())
+        #   x.append(gameState.getDistanceNearestFood())
 
         # Last score
         x.append(gameState.data.score)
 
         print(x)
 
-        a = self.weka.predict("./!sprint/classification/tutorial1/model11.model", x,
-                              "./!sprint/classification/tutorial1/model11.arff")
+        a = self.weka.predict("./!sprint/classification/tutorial1/model.model",
+                              x, "./!sprint/classification/tutorial1/training_tutorial1.arff")
+
+        # a = self.weka.predict("./!sprint/classification/keyboard/model.model",
+        #                      x, "./!sprint/classification/keyboard/training_keyboard.arff")
+
         if a not in legal:
             a = Directions.STOP
         print(a)

@@ -1,0 +1,123 @@
+lazy.IBk
+
+=== Cross-validation ===
+=== Summary ===
+
+Correlation coefficient                  0.8524
+Mean absolute error                     84.9889
+Root mean squared error                270.2441
+Relative absolute error                 27.0344 %
+Root relative squared error             56.8884 %
+Total Number of Instances              522
+
+
+=== Evaluation on test set ===
+
+Time taken to test model on supplied test set (samemaps): 0.01 seconds
+
+=== Summary ===
+
+Correlation coefficient                  0.9178
+Mean absolute error                     92.9177
+Root mean squared error                232.0218
+Relative absolute error                 28.2643 %
+Root relative squared error             42.143  %
+Total Number of Instances              243
+
+
+=== Evaluation on test set ===
+
+Time taken to test model on supplied test set (othermaps): 0.01 seconds
+
+=== Summary ===
+
+Correlation coefficient                 -0.2218
+Mean absolute error                    741.7156
+Root mean squared error               1047.9308
+Relative absolute error                109.9663 %
+Root relative squared error            113.4561 %
+Total Number of Instances              167
+
+
+
+lazy.KStar
+
+=== Cross-validation ===
+=== Summary ===
+
+Correlation coefficient                  0.9957
+Mean absolute error                     15.5831
+Root mean squared error                 43.9233
+Relative absolute error                  4.9569 %
+Root relative squared error              9.2462 %
+Total Number of Instances              522
+
+
+=== Evaluation on test set ===
+
+Time taken to test model on supplied test set (samemaps): 0.01 seconds
+
+=== Summary ===
+
+Correlation coefficient                  0.9922
+Mean absolute error                     33.9044
+Root mean squared error                 70.3603
+Relative absolute error                 10.3132 %
+Root relative squared error             12.7798 %
+Total Number of Instances              243
+
+
+=== Evaluation on test set ===
+
+Time taken to test model on supplied test set (othermaps): 0.01 seconds
+
+=== Summary ===
+
+Correlation coefficient                 -0.001 
+Mean absolute error                    653.9711
+Root mean squared error               1016.0065
+Relative absolute error                 96.9574 %
+Root relative squared error            109.9998 %
+Total Number of Instances              167
+
+
+
+trees.RandomForest
+
+=== Cross-validation ===
+=== Summary ===
+
+Correlation coefficient                  0.9881
+Mean absolute error                     29.6068
+Root mean squared error                 74.5112
+Relative absolute error                  9.4177 %
+Root relative squared error             15.6852 %
+Total Number of Instances              522
+
+
+=== Evaluation on test set ===
+
+Time taken to test model on supplied test set (samemaps): 0.01 seconds
+
+=== Summary ===
+
+Correlation coefficient                  0.9954
+Mean absolute error                     34.4945
+Root mean squared error                 54.4291
+Relative absolute error                 10.4927 %
+Root relative squared error              9.8862 %
+Total Number of Instances              243
+
+
+=== Evaluation on test set ===
+
+Time taken to test model on supplied test set (othermaps): 0.01 seconds
+
+=== Summary ===
+
+Correlation coefficient                 -0.1468
+Mean absolute error                    668.2031
+Root mean squared error                991.7403
+Relative absolute error                 99.0674 %
+Root relative squared error            107.3726 %
+Total Number of Instances              167

@@ -1,0 +1,167 @@
+* IBk *
+
+
+USE TRAINING SET:
+
+Correlation coefficient                  1     
+Mean absolute error                      0.619 
+Root mean squared error                  2.7061
+Relative absolute error                  0.197  %
+Root relative squared error              0.569  %
+Total Number of Instances              517
+
+
+CROSS-VALIDATION:
+
+Correlation coefficient                  0.8821
+Mean absolute error                     67.4979
+Root mean squared error                243.5545
+Relative absolute error                 21.4212 %
+Root relative squared error             51.0937 %
+Total Number of Instances              517
+
+
+PERCENTAGE SPLIT:
+
+Correlation coefficient                  0.8424
+Mean absolute error                     89.9347
+Root mean squared error                274.1094
+Relative absolute error                 29.6832 %
+Root relative squared error             58.4544 %
+Total Number of Instances              176
+
+
+
+
+
+SAMEMAPS:
+
+Correlation coefficient                  0.8914
+Mean absolute error                    100.2798
+Root mean squared error                283.1363
+Relative absolute error                 30.4617 %
+Root relative squared error             51.4669 %
+Total Number of Instances              243
+
+
+OTHERMAPS:
+
+Correlation coefficient                  0.2054
+Mean absolute error                    498.4354
+Root mean squared error                796.9737
+Relative absolute error                 96.3978 %
+Root relative squared error            109.4542 %
+Total Number of Instances              178
+
+
+
+* KStar *
+
+
+USE TRAINING SET:
+
+Correlation coefficient                  1     
+Mean absolute error                      0.9485
+Root mean squared error                  3.0313
+Relative absolute error                  0.3019 %
+Root relative squared error              0.6374 %
+Total Number of Instances              517
+
+
+CROSS-VALIDATION:
+
+Correlation coefficient                  0.9956
+Mean absolute error                     15.636 
+Root mean squared error                 45.0092
+Relative absolute error                  4.9623 %
+Root relative squared error              9.4422 %
+Total Number of Instances              517
+
+
+PERCENTAGE SPLIT:
+
+Correlation coefficient                  0.9947
+Mean absolute error                     16.3412
+Root mean squared error                 48.5998
+Relative absolute error                  5.3935 %
+Root relative squared error             10.364  %
+Total Number of Instances              176     
+
+
+
+
+
+SAMEMAPS:
+
+Correlation coefficient                  0.9946
+Mean absolute error                     29.1184
+Root mean squared error                 59.4553
+Relative absolute error                  8.8452 %
+Root relative squared error             10.8074 %
+Total Number of Instances              243
+
+
+OTHERMAPS:
+
+Correlation coefficient                  0.1929
+Mean absolute error                    478.9167
+Root mean squared error                755.6308
+Relative absolute error                 92.6229 %
+Root relative squared error            103.7763 %
+Total Number of Instances              178
+
+
+
+* RANDOM FOREST *
+
+
+USE TRAINING SET:
+
+Correlation coefficient                  0.9991
+Mean absolute error                     11.7652
+Root mean squared error                 21.3231
+Relative absolute error                  3.7447 %
+Root relative squared error              4.4834 %
+Total Number of Instances              517
+
+
+CROSS-VALIDATION:
+
+Correlation coefficient                  0.9932
+Mean absolute error                     28.5613
+Root mean squared error                 58.2997
+Relative absolute error                  9.0643 %
+Root relative squared error             12.2303 %
+Total Number of Instances              517
+
+
+PERCENTAGE SPLIT:
+
+Correlation coefficient                  0.986 
+Mean absolute error                     37.4309
+Root mean squared error                 85.5404
+Relative absolute error                 12.3542 %
+Root relative squared error             18.2417 %
+Total Number of Instances              176     
+
+
+
+
+
+SAMEMAPS:
+
+Correlation coefficient                  0.9846
+Mean absolute error                     85.1351
+Root mean squared error                143.3392
+Relative absolute error                 25.8612 %
+Root relative squared error             26.0554 %
+Total Number of Instances              243
+
+OTHERMAPS:
+
+Correlation coefficient                  0.3675
+Mean absolute error                    412.2873
+Root mean squared error                650.7684
+Relative absolute error                 79.7367 %
+Root relative squared error             89.3748 %
+Total Number of Instances              178
