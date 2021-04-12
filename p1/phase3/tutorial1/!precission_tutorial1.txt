@@ -46,12 +46,12 @@ Total Number of Instances              243
 
 OTHERMAPS:
 
-Correlation coefficient                  0.2054
-Mean absolute error                    498.4354
-Root mean squared error                796.9737
-Relative absolute error                 96.3978 %
-Root relative squared error            109.4542 %
-Total Number of Instances              178
+Correlation coefficient                 -0.0397
+Mean absolute error                    331.6455
+Root mean squared error                563.5666
+Relative absolute error                 97.391  %
+Root relative squared error            165.4968 %
+Total Number of Instances              167
 
 
 
@@ -103,12 +103,12 @@ Total Number of Instances              243
 
 OTHERMAPS:
 
-Correlation coefficient                  0.1929
-Mean absolute error                    478.9167
-Root mean squared error                755.6308
-Relative absolute error                 92.6229 %
-Root relative squared error            103.7763 %
-Total Number of Instances              178
+Correlation coefficient                  0.062 
+Mean absolute error                    338.0251
+Root mean squared error                537.9851
+Relative absolute error                 99.2644 %
+Root relative squared error            157.9846 %
+Total Number of Instances              167
 
 
 
@@ -159,9 +159,9 @@ Total Number of Instances              243
 
 OTHERMAPS:
 
-Correlation coefficient                  0.3675
-Mean absolute error                    412.2873
-Root mean squared error                650.7684
-Relative absolute error                 79.7367 %
-Root relative squared error             89.3748 %
-Total Number of Instances              178
+Correlation coefficient                  0.1529
+Mean absolute error                    442.5991
+Root mean squared error                568.5922
+Relative absolute error                129.9736 %
+Root relative squared error            166.9727 %
+Total Number of Instances              167
