@@ -190,11 +190,11 @@ class BustersAgent(object):
 
         print(x)
 
-        a = self.weka.predict("./!sprint/classification/tutorial1/model.model",
-                              x, "./!sprint/classification/tutorial1/training_tutorial1.arff")
+        a = self.weka.predict("./p1/phase4/classification/tutorial1/model.model",
+                              x, "./p1/phase4/classification/tutorial1/training_tutorial1.arff")
 
-        # a = self.weka.predict("./!sprint/classification/keyboard/model.model",
-        #                      x, "./!sprint/classification/keyboard/training_keyboard.arff")
+        # a = self.weka.predict("./p1/phase4/classification/keyboard/model.model",
+        #                      x, "./p1/phase4/classification/keyboard/training_keyboard.arff")
 
         if a not in legal:
             a = Directions.STOP
