@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import division
 import os
 import time
 import sys
@@ -8,7 +9,7 @@ from builtins import object
 from past.utils import old_div
 from builtins import range
 from builtins import str
-from __future__ import division
+
 # game.py
 # -------
 # Licensing Information:  You are free to use or extend these projects for

@@ -1,6 +1,7 @@
 from __future__ import print_function
-import os
 from __future__ import division
+import os
+
 # graphicsDisplay.py
 # ------------------
 # Licensing Information:  You are free to use or extend these projects for
