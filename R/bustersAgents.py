@@ -217,6 +217,8 @@ class BasicAgentAA(BustersAgent):
         BustersAgent.registerInitialState(self, gameState)
         self.distancer = Distancer(gameState.data.layout, False)
         self.countActions = 0
+
+        gameState.get
         
     ''' Example of counting something'''
     def countFood(self, gameState):
@@ -283,30 +285,24 @@ class BasicAgentAA(BustersAgent):
 
     def printLineData(self, gameState):
         return "XXXXXXXXXX"
-
 ###################################################################################################
-
+import numpy as np
 class QLearningAgent(BustersAgent):
-    #, ReinforcementAgent):
-    """
-      Q-Learning Agent
-
-      Functions you should fill in:
-        - update
-
-      Instance variables you have access to
-        - self.epsilon (exploration prob)
-        - self.alpha (learning rate)
-        - self.discount (discount rate)
-    """
-    def __init__(self, **args):
+    
+    def registerInitialState(self, gameState):
+        BustersAgent.registerInitialState(self, gameState)
+        self.distancer = Distancer(gameState.data.layout, False)
         "Initialize Q-values"
-        #ReinforcementAgent.__init__(self, **args)
 
+        self.epsilon = 0.05
+        self.alpha = 0.05
+        self.discount = 0.05
         self.actions = {"North":0, "East":1, "South":2, "West":3}
         self.table_file = open("qtable.txt", "r+")
         self.q_table = self.readQtable()
-        self.epsilon = 0.05
+
+    def initializeTable(self):
+        self.q_table = np.zeros(len(self.actions.size)
 
     def readQtable(self):
         "Read qtable from disc"
@@ -387,7 +383,7 @@ class QLearningAgent(BustersAgent):
           are no legal actions, which is the case at the terminal state,
           you should return None.
         """
-        legalActions = self.getLegalActions(state)
+        legalActions = state.getLegalActions(0)
         if len(legalActions)==0:
           return None
 
@@ -411,9 +407,10 @@ class QLearningAgent(BustersAgent):
           no legal actions, which is the case at the terminal state, you
           should choose None as the action.
         """
-
         # Pick Action
-        legalActions = self.getLegalActions(state)
+        #legal = gameState.getLegalActions(0) ##Legal position from the pacman
+        #legalActions = gameState..getLegalActions(state)
+        legalActions = state.getLegalActions(0)
         action = None
 
         if len(legalActions) == 0:
@@ -547,4 +544,38 @@ class ApproximateQAgent(PacmanQAgent):
             # you might want to print your weights here for debugging
             "*** YOUR CODE HERE ***"
             pass
+
+
+
+
+###################################################################################################
+#from qlearningAgents import QAgent
+
+'''class QLearningAgent(BustersAgent):
+
+    def registerInitialState(self, gameState):
+        BustersAgent.registerInitialState(self, gameState)
+        self.distancer = Distancer(gameState.data.layout, False)
+
+        if os.exi
+
+        QAgent.registerInitialState(self, gameState)
+
+    def getAction(self, gameState):
+        "Updates beliefs, then chooses an action based on updated beliefs."
+        #for index, inf in enumerate(self.inferenceModules):
+        #    if not self.firstMove and self.elapseTimeEnable:
+        #        inf.elapseTime(gameState)
+        #    self.firstMove = False
+        #    if self.observeEnable:
+        #        inf.observeState(gameState)
+        #    self.ghostBeliefs[index] = inf.getBeliefDistribution()
+        #self.display.updateDistributions(self.ghostBeliefs)
+        return self.chooseAction(gameState)
+
+    def chooseAction(self, gameState):
+        "By default, a BustersAgent just stops.  This should be overridden."
+        return Directions.STOP
+
+    print("SOY Q")'''
 
