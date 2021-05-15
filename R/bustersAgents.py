@@ -341,7 +341,7 @@ class QLearningAgent(BustersAgent):
         self.q_table = self.readQtable()
         self.epsilon = 0.6
         self.alpha = 0.4
-        self.discount = 0.4  # gamma
+        self.discount = 0.4
         self.reward = 0
         self.numGhosts = 4
 
@@ -402,9 +402,8 @@ class QLearningAgent(BustersAgent):
 
     def computeActionFromQValues(self, gameState, state):
         """
-          Compute the best action to take in a state.  Note that if there
-          are no legal actions, which is the case at the terminal state,
-          you should return None.
+          Compute the best action to take in a state (If two or more states have same qvalue pick up randomly).  
+          Note that if there are no legal actions, which is the case at the terminal state, you should return None.
         """
         legalActions = gameState.getLegalActions(0)
         if "Stop" in legalActions:
@@ -434,14 +433,13 @@ class QLearningAgent(BustersAgent):
         # Pick Action
         # legal = gameState.getLegalActions(0) ##Legal position from the pacman
         # legalActions = gameState..getLegalActions(state)
-        state = self.mia(gameState)
+        state = self.function(gameState)
         legalActions = gameState.getLegalActions(0)
         if "Stop" in legalActions:
             legalActions.remove("Stop")
         action = None
         if len(legalActions) == 0:
             return action
-        # caunto mayor mas aleatorio al principio mas alto
         flip = util.flipCoin(self.epsilon)
         if flip:
             return random.choice(legalActions)
@@ -493,15 +491,15 @@ class QLearningAgent(BustersAgent):
         "Return the highest q value for a given state"
         return self.computeValueFromQValues(state)
 
-    def mia(self, state):
+    def function(self, state):
         x = 1
         return x
 
     def printLineData(self, state):
         self.reward = 0
         pacmanPosition = state.getPacmanPosition()
-        goshtPosition = state.getGhostPositions()
-        goshtDistance = state.data.ghostDistances
+        ghostPosition = state.getGhostPositions()
+        ghostDistance = state.data.ghostDistances
 
         distMin = min(goshtDistance)
         index = goshtDistance.index(distMin)
@@ -544,6 +542,12 @@ class QLearningAgent(BustersAgent):
         for line in self.q_table:
             print(line)
         print("\n")
+
+###################################################################################################
+###################################################################################################
+###################################################################################################
+###################################################################################################
+###################################################################################################
 
 
 class PacmanQAgent(QLearningAgent):
