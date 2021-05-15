@@ -66,7 +66,8 @@ class KeyboardInference(inference.InferenceModule):
     def initializeUniformly(self, gameState):
         "Begin with a uniform distribution over ghost positions."
         self.beliefs = util.Counter()
-        for p in self.legalPositions: self.beliefs[p] = 1.0
+        for p in self.legalPositions:
+            self.beliefs[p] = 1.0
         self.beliefs.normalize()
 
     def observe(self, observation, gameState):
@@ -104,7 +105,7 @@ class BustersAgent(object):
         for inference in self.inferenceModules:
             inference.initialize(gameState)
         self.ghostBeliefs = [inf.getBeliefDistribution()
-                                                       for inf in self.inferenceModules]
+                             for inf in self.inferenceModules]
         self.firstMove = True
 
     def observationFunction(self, gameState):
@@ -181,10 +182,14 @@ class RandomPAgent(BustersAgent):
         move = Directions.STOP
         legal = gameState.getLegalActions(0)  # Legal position from the pacman
         move_random = random.randint(0, 3)
-        if (move_random == 0) and Directions.WEST in legal:  move = Directions.WEST
-        if (move_random == 1) and Directions.EAST in legal: move = Directions.EAST
-        if (move_random == 2) and Directions.NORTH in legal:   move = Directions.NORTH
-        if (move_random == 3) and Directions.SOUTH in legal: move = Directions.SOUTH
+        if (move_random == 0) and Directions.WEST in legal:
+            move = Directions.WEST
+        if (move_random == 1) and Directions.EAST in legal:
+            move = Directions.EAST
+        if (move_random == 2) and Directions.NORTH in legal:
+            move = Directions.NORTH
+        if (move_random == 3) and Directions.SOUTH in legal:
+            move = Directions.SOUTH
         return move
 
 
@@ -306,45 +311,49 @@ class BasicAgentAA(BustersAgent):
         move = Directions.STOP
         legal = gameState.getLegalActions(0)  # Legal position from the pacman
         move_random = random.randint(0, 3)
-        if (move_random == 0) and Directions.WEST in legal:  move = Directions.WEST
-        if (move_random == 1) and Directions.EAST in legal: move = Directions.EAST
-        if (move_random == 2) and Directions.NORTH in legal:   move = Directions.NORTH
-        if (move_random == 3) and Directions.SOUTH in legal: move = Directions.SOUTH
+        if (move_random == 0) and Directions.WEST in legal:
+            move = Directions.WEST
+        if (move_random == 1) and Directions.EAST in legal:
+            move = Directions.EAST
+        if (move_random == 2) and Directions.NORTH in legal:
+            move = Directions.NORTH
+        if (move_random == 3) and Directions.SOUTH in legal:
+            move = Directions.SOUTH
         return move
 
     def printLineData(self, gameState):
         return "XXXXXXXXXX"
 
+
+###################################################################################################
+###################################################################################################
+###################################################################################################
+###################################################################################################
 ###################################################################################################
 
 
 class QLearningAgent(BustersAgent):
 
-    def registerInitialState(self, gameState):
-        BustersAgent.registerInitialState(self, gameState)
-        self.distancer = Distancer(gameState.data.layout, False)
-        "Initialize Q-values"
-
-        self.epsilon = 0.05
-        self.alpha = 0.05
-        self.discount = 0.05
+    def __init__(self, **args):
+        BustersAgent.__init__(self, **args)
         self.actions = {"North": 0, "East": 1, "South": 2, "West": 3}
         self.table_file = open("qtable.txt", "r+")
         self.q_table = self.readQtable()
-
-    def initializeTable(self):
-        self.q_table = np.zeros(len(self.actions.size)
+        self.epsilon = 0.6
+        self.alpha = 0.4
+        self.discount = 0.4  # gamma
+        self.reward = 0
+        self.numGhosts = 4
 
     def readQtable(self):
         "Read qtable from disc"
-        table=self.table_file.readlines()
-        q_table=[]
+        table = self.table_file.readlines()
+        q_table = []
 
         for i, line in enumerate(table):
-            row=line.split()
-            row=[float(x) for x in row]
+            row = line.split()
+            row = [float(x) for x in row]
             q_table.append(row)
-
         return q_table
 
     def writeQtable(self):
@@ -353,14 +362,8 @@ class QLearningAgent(BustersAgent):
         self.table_file.truncate()
         for line in self.q_table:
             for item in line:
-                self.table_file.write(str(item)+" ")
+                self.table_file.write(str(item) + " ")
             self.table_file.write("\n")
-
-    def printQtable(self):
-        "Print qtable"
-        for line in self.q_table:
-            print(line)
-        print("\n")
 
     def __del__(self):
         "Destructor. Invokation at the end of each episode"
@@ -372,65 +375,55 @@ class QLearningAgent(BustersAgent):
         Compute the row of the qtable for a given state.
         For instance, the state (3,1) is the row 7
         """
-        return state[0]+state[1]*4
+        print(state)
+        return state
 
     def getQValue(self, state, action):
-
         """
           Returns Q(state,action)
           Should return 0.0 if we have never seen a state
           or the Q node value otherwise
         """
-        position=self.computePosition(state)
-        action_column=self.actions[action]
-
+        position = self.computePosition(state)
+        action_column = self.actions[action]
         return self.q_table[position][action_column]
 
-    def setQValue(self, state, action, value):
-
-        """
-          Set Q(state,action)
-        """
-        position=self.computePosition(state)
-        action_column=self.actions[action]
-
-        self.q_table[position][action_column]=value
-
-    def computeValueFromQValues(self, state):
+    def computeValueFromQValues(self, gameState, state):
         """
           Returns max_action Q(state,action)
           where the max is over legal actions.  Note that if
           there are no legal actions, which is the case at the
           terminal state, you should return a value of 0.0.
         """
-        legalActions=self.getLegalActions(state)
+        legalActions = gameState.getLegalActions(0)
         if len(legalActions) == 0:
-          return 0
+            return 0
         return max(self.q_table[self.computePosition(state)])
 
-    def computeActionFromQValues(self, state):
+    def computeActionFromQValues(self, gameState, state):
         """
           Compute the best action to take in a state.  Note that if there
           are no legal actions, which is the case at the terminal state,
           you should return None.
         """
-        legalActions=state.getLegalActions(0)
+        legalActions = gameState.getLegalActions(0)
+        if "Stop" in legalActions:
+            legalActions.remove("Stop")
         if len(legalActions) == 0:
-          return None
-
-        best_actions=[legalActions[0]]
-        best_value=self.getQValue(state, legalActions[0])
+            return None
+        best_actions = [legalActions[0]]
+        best_value = self.getQValue(state, legalActions[0])
         for action in legalActions:
-            value=self.getQValue(state, action)
+            value = self.getQValue(state, action)
             if value == best_value:
                 best_actions.append(action)
             if value > best_value:
-                best_actions=[action]
-                best_value=value
+                best_actions = [action]
+                best_value = value
 
         return random.choice(best_actions)
 
-    def getAction(self, state):
+    def getAction(self, gameState):
         """
           Compute the action to take in the current state.  With
           probability self.epsilon, we should take a random action and
@@ -441,17 +434,18 @@ class QLearningAgent(BustersAgent):
         # Pick Action
         # legal = gameState.getLegalActions(0) ##Legal position from the pacman
         # legalActions = gameState..getLegalActions(state)
-        legalActions=state.getLegalActions(0)
-        action=None
-
+        state = self.mia(gameState)
+        legalActions = gameState.getLegalActions(0)
+        if "Stop" in legalActions:
+            legalActions.remove("Stop")
+        action = None
         if len(legalActions) == 0:
-             return action
-
-        flip=util.flipCoin(self.epsilon)
-
+            return action
+        # caunto mayor mas aleatorio al principio mas alto
+        flip = util.flipCoin(self.epsilon)
         if flip:
             return random.choice(legalActions)
-        return self.getPolicy(state)
+        return self.getPolicy(gameState, state)
 
     def update(self, state, action, nextState, reward):
         """
@@ -474,32 +468,83 @@ class QLearningAgent(BustersAgent):
         # TRACE for transition and position to update. Comment the following lines if you do not want to see that trace
         print("Update Q-table with transition: ",
               state, action, nextState, reward)
-        position=self.computePosition(state)
-        action_column=self.actions[action]
 
-        print("Corresponding Q-table cell to update:", position, action_column)
-        position=self.computePosition(state)
+        position = self.computePosition(state)
+        action_num = self.actions.get(action)
+        legalActions = gameState.getLegalActions(0)
 
-        "*** YOUR CODE HERE ***"
-        if(state == (3, 1)):
-            QValue=(1-self.alpha) * self.getQValue(state,
-                    action) + self.alpha * (reward + 0)
+        if len(legalActions) == 1:
+            self.q_table[position][action_num] = (1 - self.alpha) * self.q_table[position][action_num] + \
+                self.alpha * (reward + 0)
         else:
-           QValue=(1-self.alpha) * self.getQValue(state, action) + self.alpha * \
-                   (reward + self.discount * self.computeValueFromQValues(nextState))
-        self.setQValue(state, action, QValue)
+            self.q_table[position][action_num] = (1 - self.alpha) * self.q_table[position][action_num] + \
+                self.alpha * (reward + self.discount *
+                              self.computeValueFromQValues(gameState, nextState))
 
         # TRACE for updated q-table. Comment the following lines if you do not want to see that trace
         print("Q-table:")
         self.printQtable()
 
-    def getPolicy(self, state):
+    def getPolicy(self, gameState, state):
         "Return the best action in the qtable for a given state"
-        return self.computeActionFromQValues(state)
+        return self.computeActionFromQValues(gameState, state)
 
     def getValue(self, state):
         "Return the highest q value for a given state"
         return self.computeValueFromQValues(state)
+
+    def mia(self, state):
+        x = 1
+        return x
+
+    def printLineData(self, state):
+        self.reward = 0
+        pacmanPosition = state.getPacmanPosition()
+        goshtPosition = state.getGhostPositions()
+        goshtDistance = state.data.ghostDistances
+
+        distMin = min(goshtDistance)
+        index = goshtDistance.index(distMin)
+        nearestGosht = goshtPosition[index]
+
+        vectorPosicion = (
+            nearestGosht[0] - pacmanPosition[0], nearestGosht[1] - pacmanPosition[1])
+
+        arriba = vectorPosicion[1] > 0
+        abajo = vectorPosicion[1] < 0
+        derecha = vectorPosicion[0] > 0
+        izquierda = vectorPosicion[0] < 0
+        lugarRelativo = -1
+        if arriba:
+            if vectorPosicion[0] > 0:
+                lugarRelativo = 4
+            elif vectorPosicion[0] < 0:
+                lugarRelativo = 5
+            elif vectorPosicion[0] == 0:
+                lugarRelativo = 0
+        elif abajo:
+            if vectorPosicion[0] > 0:
+                lugarRelativo = 6
+            elif vectorPosicion[0] < 0:
+                lugarRelativo = 7
+            elif vectorPosicion[0] == 0:
+                lugarRelativo = 1
+        elif derecha:
+            lugarRelativo = 2
+        elif vectorPosicion[0] < 0:
+            lugarRelativo = 3
+
+        return lugarRelativo
+
+    def scorito(self, state):
+        return state.getScore()
+
+    def printQtable(self):
+        "Print qtable"
+        for line in self.q_table:
+            print(line)
+        print("\n")
+
 
 class PacmanQAgent(QLearningAgent):
     "Exactly the same as QLearningAgent, but with different default parameters"
@@ -515,11 +560,11 @@ class PacmanQAgent(QLearningAgent):
         gamma    - discount factor
         numTraining - number of training episodes, i.e. no learning after these many episodes
         """
-        args['epsilon']=epsilon
-        args['gamma']=gamma
-        args['alpha']=alpha
-        args['numTraining']=numTraining
-        self.index=0  # This is always Pacman
+        args['epsilon'] = epsilon
+        args['gamma'] = gamma
+        args['alpha'] = alpha
+        args['numTraining'] = numTraining
+        self.index = 0  # This is always Pacman
         QLearningAgent.__init__(self, **args)
 
     def getAction(self, state):
@@ -528,9 +573,10 @@ class PacmanQAgent(QLearningAgent):
         informs parent of action for Pacman.  Do not change or remove this
         method.
         """
-        action=QLearningAgent.getAction(self, state)
+        action = QLearningAgent.getAction(self, state)
         self.doAction(state, action)
         return action
+
 
 class ApproximateQAgent(PacmanQAgent):
     """
@@ -540,10 +586,11 @@ class ApproximateQAgent(PacmanQAgent):
        and update.  All other QLearningAgent functions
        should work as is.
     """
+
     def __init__(self, extractor='IdentityExtractor', **args):
-        self.featExtractor=util.lookup(extractor, globals())()
+        self.featExtractor = util.lookup(extractor, globals())()
         PacmanQAgent.__init__(self, **args)
-        self.weights=util.Counter()
+        self.weights = util.Counter()
 
     def getWeights(self):
         return self.weights
@@ -562,11 +609,11 @@ class ApproximateQAgent(PacmanQAgent):
         """
         "*** YOUR CODE HERE ***"
 
-        feats=self.featExtractor.getFeatures(state, action)
+        feats = self.featExtractor.getFeatures(state, action)
         for f in feats:
-          self.weights[f]=self.weights[f] + self.alpha * feats[f] * \
-              ((reward + self.discount * self.computeValueFromQValues(nextState)
-               ) - self.getQValue(state, action))
+            self.weights[f] = self.weights[f] + self.alpha * feats[f] * \
+                ((reward + self.discount * self.computeValueFromQValues(nextState)
+                  ) - self.getQValue(state, action))
 
         # util.raiseNotDefined()
 
@@ -580,37 +627,3 @@ class ApproximateQAgent(PacmanQAgent):
             # you might want to print your weights here for debugging
             "*** YOUR CODE HERE ***"
             pass
-
-
-
-
-###################################################################################################
-# from qlearningAgents import QAgent
-
-'''class QLearningAgent(BustersAgent):
-
-    def registerInitialState(self, gameState):
-        BustersAgent.registerInitialState(self, gameState)
-        self.distancer = Distancer(gameState.data.layout, False)
-
-        if os.exi
-
-        QAgent.registerInitialState(self, gameState)
-
-    def getAction(self, gameState):
-        "Updates beliefs, then chooses an action based on updated beliefs."
-        # for index, inf in enumerate(self.inferenceModules):
-        #    if not self.firstMove and self.elapseTimeEnable:
-        #        inf.elapseTime(gameState)
-        #    self.firstMove = False
-        #    if self.observeEnable:
-        #        inf.observeState(gameState)
-        #    self.ghostBeliefs[index] = inf.getBeliefDistribution()
-        # self.display.updateDistributions(self.ghostBeliefs)
-        return self.chooseAction(gameState)
-
-    def chooseAction(self, gameState):
-        "By default, a BustersAgent just stops.  This should be overridden."
-        return Directions.STOP
-
-    print("SOY Q")'''
