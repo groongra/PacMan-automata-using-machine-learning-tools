@@ -338,12 +338,13 @@ class QLearningAgent(BustersAgent):
 
             pacman_position = gameState.getPacmanPosition()
             ghost_positions = gameState.getGhostPositions()
-            #print("ghostDistances:",gameState.data.ghostDistances)
-            #print("ghost_positions:",ghost_positions)
-            nearest_ghost_index = gameState.data.ghostDistances.index(min(value for value in gameState.data.ghostDistances if value is not None))
+            # print("ghostDistances:",gameState.data.ghostDistances)
+            # print("ghost_positions:",ghost_positions)
+            nearest_ghost_index = gameState.data.ghostDistances.index(
+                min(value for value in gameState.data.ghostDistances if value is not None))
             nearest_ghost = ghost_positions[nearest_ghost_index]
-            
-            #print("nearest_ghost:",nearest_ghost)
+
+            # print("nearest_ghost:",nearest_ghost)
             x_dif = pacman_position[0] - nearest_ghost[0]
             y_dif = pacman_position[1] - nearest_ghost[1]
         except Exception:
@@ -358,38 +359,38 @@ class QLearningAgent(BustersAgent):
                 3)  DOWN
         '''
 
-        if(x_dif>0): 
+        if(x_dif > 0):
             '''LEFT'''
-            current_state = 0    
+            current_state = 0
 
-        elif(x_dif<0):  
+        elif(x_dif < 0):
             '''RIGHT'''
             current_state = 1
 
-        elif(y_dif<0):  
+        elif(y_dif < 0):
             ''' UP '''
             current_state = 2
-        else:   
+        else:
             '''DOWN'''
             current_state = 3
 
         return current_state
 
     def printStateData(self, state_data):
-        if(state_data == 0): 
+        if(state_data == 0):
             '''LEFT'''
-            state_info = "LEFT"    
+            state_info = "LEFT"
 
-        elif(state_data == 0):  
+        elif(state_data == 0):
             '''RIGHT'''
-            state_info = "RIGHT" 
+            state_info = "RIGHT"
 
         elif(state_data == 0):
             ''' UP '''
-            state_info = "UP" 
-        else:   
+            state_info = "UP"
+        else:
             '''DOWN'''
-            state_info = "DOWN" 
+            state_info = "DOWN"
 
         return state_info
 
@@ -434,7 +435,7 @@ class QLearningAgent(BustersAgent):
         Compute the row of the qtable for a given state.
         For instance, the state (3,1) is the row 7
         """
-        #print(state)   modified
+        # print(state)
         return state
 
     def getQValue(self, state, action):
@@ -493,7 +494,7 @@ class QLearningAgent(BustersAgent):
         # legal = gameState.getLegalActions(0) ##Legal position from the pacman
         # legalActions = gameState..getLegalActions(state)
 
-        state = self.getStateData(gameState)  #MODIFIED#
+        state = self.getStateData(gameState)  # MODIFIED#
         legalActions = gameState.getLegalActions(0)
         if "Stop" in legalActions:
             legalActions.remove("Stop")
@@ -540,8 +541,8 @@ class QLearningAgent(BustersAgent):
                               self.computeValueFromQValues(gameState, next_state))
 
         # TRACE for updated q-table. Comment the following lines if you do not want to see that trace
-        #print("Q-table:")
-        #self.printQtable()
+        # print("Q-table:")
+        # self.printQtable()
 
     def getPolicy(self, gameState, state):
         "Return the best action in the qtable for a given state"
@@ -569,6 +570,7 @@ class QLearningAgent(BustersAgent):
 ###################################################################################################
 ###################################################################################################
 ###################################################################################################
+
 
 class PacmanQAgent(QLearningAgent):
     "Exactly the same as QLearningAgent, but with different default parameters"
@@ -600,6 +602,7 @@ class PacmanQAgent(QLearningAgent):
         action = QLearningAgent.getAction(self, state)
         self.doAction(state, action)
         return action
+
 
 class ApproximateQAgent(PacmanQAgent):
     """
