@@ -10,6 +10,7 @@ from past.utils import old_div
 from builtins import range
 from builtins import str
 
+
 # game.py
 # -------
 # Licensing Information:  You are free to use or extend these projects for
@@ -748,17 +749,40 @@ class Game(object):
             self.moveHistory.append((agentIndex, action))
             if self.catchExceptions:
                 try:
-                    self.state = self.state.generateSuccessor(
-                        agentIndex, action)
+                    self.state = self.state.generateSuccessor(agentIndex, action)
                 except Exception as data:
                     self.mute(agentIndex)
                     self._agentCrash(agentIndex)
                     self.unmute()
                     return
             else:
+                
                 self.state = self.state.generateSuccessor(agentIndex, action)
 
-            # UPDATE
+                # UPDATE Q-Learning (estado tick, accion, estado tick siguiente, refuerzo)
+            
+                if (agentIndex == 0) & (hasattr(agent, "update")):
+                    
+
+                    new_observation = self.state
+
+                    previous_state_data = agent.getStateData(observation)
+                    current_state_data = agent.getStateData(new_observation)
+                    if(previous_state_data == -1|current_state_data ==-1):
+                        print("END GAME")
+                    else:
+                        '''GAME'''
+                        
+                        #REWARD
+                        reward = 0
+                        #   -> SCORE CHANGE:    self.state.data.scoreChange()
+                        
+                        agent.update(self.state, previous_state_data, action, current_state_data, reward)
+
+                        print("Previous_state_data: ",agent.printStateData(previous_state_data))
+                        print("Current_state_data: ",agent.printStateData(current_state_data))
+                        previous_state_data = current_state_data
+                        #previous_score = current_score
 
             # Change the display
             self.display.update(self.state.data)

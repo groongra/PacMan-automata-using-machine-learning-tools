@@ -331,8 +331,68 @@ class BasicAgentAA(BustersAgent):
 ###################################################################################################
 ###################################################################################################
 
-
 class QLearningAgent(BustersAgent):
+
+    def getStateData(self, gameState):
+        try:
+
+            pacman_position = gameState.getPacmanPosition()
+            ghost_positions = gameState.getGhostPositions()
+            print("ghostDistances:",gameState.data.ghostDistances)
+            print("ghost_positions:",ghost_positions)
+            nearest_ghost_index = gameState.data.ghostDistances.index(min(value for value in gameState.data.ghostDistances if value is not None))
+            nearest_ghost = ghost_positions[nearest_ghost_index]
+            
+            print("nearest_ghost:",nearest_ghost)
+            x_dif = pacman_position[0] - nearest_ghost[0]
+            y_dif = pacman_position[1] - nearest_ghost[1]
+        except Exception:
+            return -1
+
+
+        current_state = -1
+
+        ''' STATES:
+                0)  LEFT
+                1)  RIGHT
+                2)  UP 
+                3)  DOWN
+        '''
+
+        if(x_dif>0): 
+            '''LEFT'''
+            current_state = 0    
+
+        elif(x_dif<0):  
+            '''RIGHT'''
+            current_state = 1
+
+        elif(y_dif<0):  
+            ''' UP '''
+            current_state = 2
+        else:   
+            '''DOWN'''
+            current_state = 3
+
+        return current_state
+
+    def printStateData(self, state_data):
+        if(state_data == 0): 
+            '''LEFT'''
+            state_info = "LEFT"    
+
+        elif(state_data == 0):  
+            '''RIGHT'''
+            state_info = "RIGHT" 
+
+        elif(state_data == 0):
+            ''' UP '''
+            state_info = "UP" 
+        else:   
+            '''DOWN'''
+            state_info = "DOWN" 
+
+        return state_info
 
     def __init__(self, **args):
         BustersAgent.__init__(self, **args)
@@ -445,7 +505,7 @@ class QLearningAgent(BustersAgent):
             return random.choice(legalActions)
         return self.getPolicy(gameState, state)
 
-    def update(self, state, action, nextState, reward):
+    def update(self, gameState, current_state, action, next_state, reward):
         """
         The parent class calls this to observe a
         state = action => nextState and reward transition.
@@ -465,9 +525,9 @@ class QLearningAgent(BustersAgent):
         """
         # TRACE for transition and position to update. Comment the following lines if you do not want to see that trace
         print("Update Q-table with transition: ",
-              state, action, nextState, reward)
+              current_state, action, next_state, reward)
 
-        position = self.computePosition(state)
+        position = self.computePosition(current_state)
         action_num = self.actions.get(action)
         legalActions = gameState.getLegalActions(0)
 
@@ -477,11 +537,11 @@ class QLearningAgent(BustersAgent):
         else:
             self.q_table[position][action_num] = (1 - self.alpha) * self.q_table[position][action_num] + \
                 self.alpha * (reward + self.discount *
-                              self.computeValueFromQValues(gameState, nextState))
+                              self.computeValueFromQValues(gameState, next_state))
 
         # TRACE for updated q-table. Comment the following lines if you do not want to see that trace
-        print("Q-table:")
-        self.printQtable()
+        #print("Q-table:")
+        #self.printQtable()
 
     def getPolicy(self, gameState, state):
         "Return the best action in the qtable for a given state"
@@ -548,7 +608,6 @@ class QLearningAgent(BustersAgent):
 ###################################################################################################
 ###################################################################################################
 ###################################################################################################
-
 
 class PacmanQAgent(QLearningAgent):
     "Exactly the same as QLearningAgent, but with different default parameters"
