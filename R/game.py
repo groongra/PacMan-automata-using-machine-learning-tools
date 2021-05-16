@@ -763,11 +763,10 @@ class Game(object):
             
                 if (agentIndex == 0) & (hasattr(agent, "update")):
                     
-
                     new_observation = self.state
-
                     previous_state_data = agent.getStateData(observation)
                     current_state_data = agent.getStateData(new_observation)
+                    
                     if(previous_state_data == -1|current_state_data ==-1):
                         print("END GAME")
                     else:
@@ -776,7 +775,8 @@ class Game(object):
                         #REWARD
                         reward = 0
                         #   -> SCORE CHANGE:    self.state.data.scoreChange()
-                        
+                        if(self.state.data.scoreChange>0):
+                            reward = 100
                         agent.update(self.state, previous_state_data, action, current_state_data, reward)
 
                         print("Previous_state_data: ",agent.printStateData(previous_state_data))

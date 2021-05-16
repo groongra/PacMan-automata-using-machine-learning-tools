@@ -338,17 +338,16 @@ class QLearningAgent(BustersAgent):
 
             pacman_position = gameState.getPacmanPosition()
             ghost_positions = gameState.getGhostPositions()
-            print("ghostDistances:",gameState.data.ghostDistances)
-            print("ghost_positions:",ghost_positions)
+            #print("ghostDistances:",gameState.data.ghostDistances)
+            #print("ghost_positions:",ghost_positions)
             nearest_ghost_index = gameState.data.ghostDistances.index(min(value for value in gameState.data.ghostDistances if value is not None))
             nearest_ghost = ghost_positions[nearest_ghost_index]
             
-            print("nearest_ghost:",nearest_ghost)
+            #print("nearest_ghost:",nearest_ghost)
             x_dif = pacman_position[0] - nearest_ghost[0]
             y_dif = pacman_position[1] - nearest_ghost[1]
         except Exception:
             return -1
-
 
         current_state = -1
 
@@ -435,7 +434,7 @@ class QLearningAgent(BustersAgent):
         Compute the row of the qtable for a given state.
         For instance, the state (3,1) is the row 7
         """
-        print(state)
+        #print(state)   modified
         return state
 
     def getQValue(self, state, action):
@@ -493,7 +492,8 @@ class QLearningAgent(BustersAgent):
         # Pick Action
         # legal = gameState.getLegalActions(0) ##Legal position from the pacman
         # legalActions = gameState..getLegalActions(state)
-        state = self.function(gameState)
+
+        state = self.getStateData(gameState)  #MODIFIED#
         legalActions = gameState.getLegalActions(0)
         if "Stop" in legalActions:
             legalActions.remove("Stop")
@@ -551,48 +551,9 @@ class QLearningAgent(BustersAgent):
         "Return the highest q value for a given state"
         return self.computeValueFromQValues(state)
 
-    def function(self, state):
+    '''def function(self, state):
         x = 1
-        return x
-
-    def printLineData(self, state):
-        self.reward = 0
-        pacmanPosition = state.getPacmanPosition()
-        ghostPosition = state.getGhostPositions()
-        ghostDistance = state.data.ghostDistances
-
-        distMin = min(goshtDistance)
-        index = goshtDistance.index(distMin)
-        nearestGosht = goshtPosition[index]
-
-        vectorPosicion = (
-            nearestGosht[0] - pacmanPosition[0], nearestGosht[1] - pacmanPosition[1])
-
-        arriba = vectorPosicion[1] > 0
-        abajo = vectorPosicion[1] < 0
-        derecha = vectorPosicion[0] > 0
-        izquierda = vectorPosicion[0] < 0
-        lugarRelativo = -1
-        if arriba:
-            if vectorPosicion[0] > 0:
-                lugarRelativo = 4
-            elif vectorPosicion[0] < 0:
-                lugarRelativo = 5
-            elif vectorPosicion[0] == 0:
-                lugarRelativo = 0
-        elif abajo:
-            if vectorPosicion[0] > 0:
-                lugarRelativo = 6
-            elif vectorPosicion[0] < 0:
-                lugarRelativo = 7
-            elif vectorPosicion[0] == 0:
-                lugarRelativo = 1
-        elif derecha:
-            lugarRelativo = 2
-        elif vectorPosicion[0] < 0:
-            lugarRelativo = 3
-
-        return lugarRelativo
+        return x'''
 
     def scorito(self, state):
         return state.getScore()
@@ -639,7 +600,6 @@ class PacmanQAgent(QLearningAgent):
         action = QLearningAgent.getAction(self, state)
         self.doAction(state, action)
         return action
-
 
 class ApproximateQAgent(PacmanQAgent):
     """
