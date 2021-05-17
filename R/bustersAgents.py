@@ -336,9 +336,7 @@ class QLearningAgent(BustersAgent):
     def __init__(self, **args):
         BustersAgent.__init__(self, **args)
         self.actions = {"North": 0, "East": 1, "South": 2, "West": 3}
-        #self.table_file = open("qtable.txt", "r+")
-        #self.q_table = self.readQtable()
-        self.epsilon = 0.05
+        self.epsilon = 0.1
         self.alpha = 0.05
         self.discount = 0.05
         self.reward = 0
@@ -350,11 +348,9 @@ class QLearningAgent(BustersAgent):
         if os.path.isfile('qtable.txt'):
             self.table_file = open("qtable.txt", "r+")
             self.q_table = self.readQtable()
-            print("NEEUI")
         else:
             self.table_file = open("qtable.txt", "w+")
             self.q_table = np.zeros((len(self.states), len(self.actions)))
-            print("EUUUU")
 
     def readQtable(self):
         "Read qtable from disc"
@@ -382,263 +378,207 @@ class QLearningAgent(BustersAgent):
         self.table_file.close()
 
     def getStateData(self, gameState):
-        try:
-            pacman_position = gameState.getPacmanPosition()
-            ghost_positions = gameState.getGhostPositions()
-            # print("ghostDistances:",gameState.data.ghostDistances)
-            # print("ghost_positions:",ghost_positions)
-            nearest_ghost_index = gameState.data.ghostDistances.index(
-                min(value for value in gameState.data.ghostDistances if value is not None))
-            nearest_ghost = ghost_positions[nearest_ghost_index]
-            # print("nearest_ghost:",nearest_ghost)
-            x_dif = pacman_position[0] - nearest_ghost[0]
-            y_dif = pacman_position[1] - nearest_ghost[1]
-
-        except Exception:
-            return -1
-
-        current_state = -1
 
         ''' STATES:
                 0)  LEFT
                 1)  RIGHT
                 2)  UP 
                 3)  DOWN
+                -1) FINAL_STATE
         '''
-        """if(x_dif > 0):
-            '''LEFT'''
-            current_state = 0
+        move = -1
+        try:
+            self.countActions = self.countActions + 1
+            
+            legal = gameState.getLegalActions(0)  # Legal position from the pacman
+            ghostsDistances = gameState.data.ghostDistances  # Manhattan distance to ghosts
 
-        elif(x_dif < 0):
-            '''RIGHT'''
-            current_state = 1
+            minGhostsDistance = min(x for x in ghostsDistances if x is not None)
+            ghostPosition = gameState.getGhostPositions(
+            )[ghostsDistances.index(minGhostsDistance)]
+            validMovements = gameState.getLegalPacmanActions()
+            pacPosition = gameState.getPacmanPosition()
+            xDistanceToGhost = abs(ghostPosition[0] - pacPosition[0])
+            yDistanceToGhost = abs(ghostPosition[1] - pacPosition[1])
+            prevMove = gameState.data.agentStates[0].getDirection()
+            x, y = gameState.getPacmanPosition()
+                #print("$", prevMove)
+            if(len(validMovements) == 5 and not gameState.getWalls()[x+1][y+1] and not gameState.getWalls()[x+1][y-1] and not gameState.getWalls()[x-1][y+1] and not gameState.getWalls()[x-1][y-1]):
+                print("LIBRE")
+                if(xDistanceToGhost > yDistanceToGhost):
 
-        elif(y_dif < 0):
-            ''' UP '''
-            current_state = 2
-        else:
-            '''DOWN'''
-            current_state = 3"""
-
-        self.countActions = self.countActions + 1
-        # self.printInfo(gameState)
-
-        move = Directions.STOP
-        legal = gameState.getLegalActions(0)  # Legal position from the pacman
-
-        # Manhattan distance to ghosts
-        ghostsDistances = gameState.data.ghostDistances
-
-        minGhostsDistance = min(x for x in ghostsDistances if x is not None)
-
-        ghostPosition = gameState.getGhostPositions(
-        )[ghostsDistances.index(minGhostsDistance)]
-        validMovements = gameState.getLegalPacmanActions()
-        pacPosition = gameState.getPacmanPosition()
-        xDistanceToGhost = abs(ghostPosition[0] - pacPosition[0])
-        yDistanceToGhost = abs(ghostPosition[1] - pacPosition[1])
-        prevMove = gameState.data.agentStates[0].getDirection()
-        x, y = gameState.getPacmanPosition()
-        print("$", prevMove)
-        if(len(validMovements) == 5 and not gameState.getWalls()[x+1][y+1] and not gameState.getWalls()[x+1][y-1] and not gameState.getWalls()[x-1][y+1] and not gameState.getWalls()[x-1][y-1]):
-            print("LIBRE")
-            if(xDistanceToGhost > yDistanceToGhost):
-
-                if(ghostPosition[0] > pacPosition[0]):
-                    move = 1
-                elif(ghostPosition[0] < pacPosition[0]):
-                    move = 0
+                    if(ghostPosition[0] > pacPosition[0]):
+                        move = 1
+                    elif(ghostPosition[0] < pacPosition[0]):
+                        move = 0
+                else:
+                    if(ghostPosition[1] > pacPosition[1]):
+                        move = 2
+                    else:
+                        move = 3
             else:
-                if(ghostPosition[1] > pacPosition[1]):
-                    move = 2
+                # EJE X
+                if(xDistanceToGhost > yDistanceToGhost):
+                    # PREFERENCIA ESTE
+                    if(ghostPosition[0] > pacPosition[0]):
+                        if(prevMove == Directions.WEST and (not gameState.getWalls()[x][y+1] or not gameState.getWalls()[x][y-1])):
+                            print("OBSTACULO NORTE/SUR - BORDEANDO FIN")
+                            move_random = random.randint(0, 1)
+                            if (move_random == 0):
+                                if(Directions.NORTH in legal): move = 2
+                                elif(Directions.SOUTH in legal): move = 3
+                            elif (move_random == 1):
+                                if(Directions.SOUTH in legal): move = 3
+                                if(Directions.NORTH in legal): move = 2
+                        elif(prevMove == Directions.NORTH and gameState.getWalls()[x+1][y] and Directions.NORTH in legal):
+                            move = 2
+                            print("OBSTACULO ESTE - BORDEANDO ARRIBA")
+                        elif(prevMove == Directions.SOUTH and gameState.getWalls()[x+1][y] and Directions.SOUTH in legal):
+                            move = 3
+                            print("OBSTACULO ESTE - BORDEANDO ABAJO")
+                        elif(Directions.EAST not in legal):
+                            print("OBSTACULO ESTE")
+                            up = y
+                            down = y
+                            while down > 0 and gameState.getWalls()[x+1][down]:
+                                down -= 1
+
+                            while up < gameState.data.layout.height and gameState.getWalls()[x+1][up]:
+                                up += 1
+                            goUp = y - down > up - y
+
+                            if((y-down == 0 or goUp or Directions.SOUTH not in legal) and Directions.NORTH in legal):
+                                move = 2
+                            elif((up+y == gameState.data.layout.height or not goUp or Directions.NORTH not in legal) and Directions.SOUTH in legal):
+                                move = 3
+                            elif(Directions.WEST in legal):
+                                move = 0
+                        else:
+                            print("PREFERENCIA ESTE")
+                            move = 1
+                    # PREFERENCIA OSTE
+                    else:
+                        if(prevMove == Directions.EAST and (not gameState.getWalls()[x][y+1] or not gameState.getWalls()[x][y-1])):
+                            print("OBSTACULO NORTE/SUR - BORDEANDO FIN")
+                            move_random = random.randint(0, 1)
+                            if (move_random == 0):
+                                if(Directions.NORTH in legal): move = 2
+                                elif(Directions.SOUTH in legal): move = 3
+                            elif (move_random == 1):
+                                if(Directions.SOUTH in legal): move = 3
+                                if(Directions.NORTH in legal): move = 2
+                        elif(prevMove == Directions.NORTH and gameState.getWalls()[x-1][y] and Directions.NORTH) in legal:
+                            move = 2
+                            print("OBSTACULO OESTE - BORDEANDO ARRIBA")
+                        elif(prevMove == Directions.SOUTH and gameState.getWalls()[x-1][y] and Directions.SOUTH in legal):
+                            move = 3
+                            print("OBSTACULO OESTE - BORDEANDO ABAJO")
+                        elif(Directions.WEST not in legal):
+                            print("OBSTACULO OESTE")
+                            down = y
+                            up = y
+                            while down > 0 and gameState.getWalls()[x-1][down]:
+                                down -= 1
+
+                            while up < gameState.data.layout.height and gameState.getWalls()[x-1][up]:
+                                up += 1
+                            goUp = y - down > up - y
+                            if((y-down == 0 or goUp or Directions.SOUTH not in legal) and Directions.NORTH in legal):
+                                move = 2
+                            elif((up+y == gameState.data.layout.height or not goUp or Directions.NORTH not in legal) and Directions.SOUTH in legal):
+                                move = 3
+                            elif(Directions.EAST in legal):
+                                move = 1
+                        else:
+                            move = 0
+                            print("PREFERENCIA OESTE")
+                # EJE Y
                 else:
-                    move = 3
-        else:
-            # EJE X
-            if(xDistanceToGhost > yDistanceToGhost):
-                # PREFERENCIA ESTE
-                if(ghostPosition[0] > pacPosition[0]):
-                    '''if((prevMove==Directions.NORTH or prevMove==Directions.SOUTH) and not gameState.getWalls()[x+1][y] and Directions.EAST in legal): 
-                        move = 1
-                        print("OBSTACULO ESTE - BORDEANDO FIN")'''
-
-                    if(prevMove == Directions.WEST and (not gameState.getWalls()[x][y+1] or not gameState.getWalls()[x][y-1])):
-                        print("OBSTACULO NORTE/SUR - BORDEANDO FIN")
-                        move_random = random.randint(0, 1)
-                        if (move_random == 0) and Directions.NORTH in legal:
-                            move = 2
-                        elif (move_random == 1) and Directions.SOUTH in legal:
-                            move = 3
-
-                    elif(prevMove == Directions.NORTH and gameState.getWalls()[x+1][y] and Directions.NORTH in legal):
-                        move = 2
-                        print("OBSTACULO ESTE - BORDEANDO ARRIBA")
-
-                    elif(prevMove == Directions.SOUTH and gameState.getWalls()[x+1][y] and Directions.SOUTH in legal):
-                        move = 3
-                        print("OBSTACULO ESTE - BORDEANDO ABAJO")
-
-                    elif(Directions.EAST not in legal):
-                        print("OBSTACULO ESTE")
-                        up = y
-                        down = y
-                        while down > 0 and gameState.getWalls()[x+1][down]:
-                            down -= 1
-
-                        while up < gameState.data.layout.height and gameState.getWalls()[x+1][up]:
-                            up += 1
-                        goUp = y - down > up - y
-
-                        if((y-down == 0 or goUp or Directions.SOUTH not in legal) and Directions.NORTH in legal):
-                            move = 2
-                        elif((up+y == gameState.data.layout.height or not goUp or Directions.NORTH not in legal) and Directions.SOUTH in legal):
-                            move = 3
-                        elif(Directions.WEST in legal):
+                    # PREFERENCIA NORTE
+                    if(ghostPosition[1] > pacPosition[1]):
+                        if(prevMove == Directions.SOUTH and (not gameState.getWalls()[x-1][y] or not gameState.getWalls()[x+1][y])):
+                            print("OBSTACULO ESTE/OESTE - BORDEANDO FIN")
+                            move_random = random.randint(0, 1)
+                            print("RAND",move_random)
+                            if (move_random == 0): 
+                                if(Directions.WEST in legal): move = 0
+                                elif(Directions.EAST in legal):move = 1
+                            elif (move_random == 1):
+                                if(Directions.EAST in legal):move = 1
+                                elif(Directions.WEST in legal): move = 0
+                        elif(prevMove == Directions.EAST and gameState.getWalls()[x][y+1] and Directions.EAST in legal):
+                            move = 1
+                            print("OBSTACULO NORTE - BORDEANDO DER")
+                        elif(prevMove == Directions.WEST and gameState.getWalls()[x][y+1] and Directions.WEST in legal):
                             move = 0
+                            print("OBSTACULO NORTE - BORDEANDO IZQ")
+                        elif(Directions.NORTH not in legal):
+                            print("OBSTACULO NORTE")
+                            left = x
+                            right = x
+
+                            while left > 0 and gameState.getWalls()[left][y+1]:
+                                left -= 1
+
+                            while right < gameState.data.layout.width and gameState.getWalls()[right][y+1]:
+                                right += 1
+
+                            goLeft = x - left < right - x
+
+                            if((x+right == gameState.data.layout.width or goLeft or Directions.EAST not in legal) and Directions.WEST in legal):
+                                move = 0
+                            elif((x-left == 0 or not goLeft or Directions.WEST not in legal) and Directions.EAST in legal):
+                                move = 1
+                            elif(Directions.SOUTH in legal):
+                                move = 3
+                        else:
+                            move = 2
+                            print("PREFERENCIA NORTE")
+                    # PREFERENCIA SUR
                     else:
-                        print("PREFERENCIA ESTE")
-                        move = 1
+                        if(prevMove == Directions.NORTH and (not gameState.getWalls()[x-1][y] or not gameState.getWalls()[x+1][y])):
+                            print("OBSTACULO ESTE/OESTE - BORDEANDO FIN")
+                            move_random = random.randint(0, 1)
+                            if (move_random == 0): 
+                                if(Directions.WEST in legal): move = 0
+                                elif(Directions.EAST in legal):move = 1
+                            elif (move_random == 1) and Directions.EAST in legal:
+                                if(Directions.EAST in legal):move = 1
+                                elif(Directions.WEST in legal): move = 0
+                        elif(prevMove == Directions.EAST and gameState.getWalls()[x][y-1] and Directions.EAST in legal):
+                            move = 1
+                            print("OBSTACULO SUR - BORDEANDO DER")
+                        elif(prevMove == Directions.WEST and gameState.getWalls()[x][y-1] and Directions.WEST in legal):
+                            move = 0
+                            print("OBSTACULO SUR - BORDEANDO IZQ")
+                        elif(Directions.SOUTH not in legal):
+                            print("OBSTACULO SUR")
+                            left = x
+                            right = x
 
-                # PREFERENCIA OSTE
-                else:
-                    '''if((prevMove==Directions.NORTH or prevMove==Directions.SOUTH) and not gameState.getWalls()[x-1][y] and Directions.WEST in legal): 
-                        move = 0
-                        print("OBSTACULO OESTE - BORDEANDO FIN")'''
+                            while left > 0 and gameState.getWalls()[left][y-1]:
+                                left -= 1
+                            while right < gameState.data.layout.width and gameState.getWalls()[right][y-1]:
+                                right += 1
+                            goLeft = x - left < right - x
 
-                    if(prevMove == Directions.EAST and (not gameState.getWalls()[x][y+1] or not gameState.getWalls()[x][y-1])):
-                        print("OBSTACULO NORTE/SUR - BORDEANDO FIN")
-                        move_random = random.randint(0, 1)
-                        if (move_random == 0) and Directions.NORTH in legal:
-                            move = 2
-                        elif (move_random == 1) and Directions.SOUTH in legal:
+                            if((x+right == gameState.data.layout.width or goLeft or Directions.EAST not in legal) and Directions.WEST in legal):
+                                move = 0
+                            elif((x-left == 0 or not goLeft or Directions.WEST not in legal) and Directions.EAST in legal):
+                                move = 1
+                            elif(Directions.NORTH in legal):
+                                move = 2
+                        else:
                             move = 3
-                    elif(prevMove == Directions.NORTH and gameState.getWalls()[x-1][y] and Directions.NORTH) in legal:
-                        move = 2
-                        print("OBSTACULO OESTE - BORDEANDO ARRIBA")
-
-                    elif(prevMove == Directions.SOUTH and gameState.getWalls()[x-1][y] and Directions.SOUTH in legal):
-                        move = 3
-                        print("OBSTACULO OESTE - BORDEANDO ABAJO")
-
-                    elif(Directions.WEST not in legal):
-                        print("OBSTACULO OESTE")
-                        down = y
-                        up = y
-                        while down > 0 and gameState.getWalls()[x-1][down]:
-                            down -= 1
-
-                        while up < gameState.data.layout.height and gameState.getWalls()[x-1][up]:
-                            up += 1
-                        goUp = y - down > up - y
-                        if((y-down == 0 or goUp or Directions.SOUTH not in legal) and Directions.NORTH in legal):
-                            move = 2
-                        elif((up+y == gameState.data.layout.height or not goUp or Directions.NORTH not in legal) and Directions.SOUTH in legal):
-                            move = 3
-                        elif(Directions.EAST in legal):
-                            move = 1
-
-                    else:
-                        move = 0
-                        print("PREFERENCIA OESTE")
-
-            # EJE Y
-            else:
-                # PREFERENCIA NORTE
-                if(ghostPosition[1] > pacPosition[1]):
-
-                    '''if((prevMove==Directions.EAST or prevMove==Directions.WEST) and not gameState.getWalls()[x][y+1] and Directions.NORTH in legal): 
-                        move = 2
-                        print("OBSTACULO NORTE - BORDEANDO FIN")'''
-
-                    if(prevMove == Directions.SOUTH and (not gameState.getWalls()[x-1][y] or not gameState.getWalls()[x+1][y])):
-                        print("OBSTACULO ESTE/OESTE - BORDEANDO FIN")
-                        move_random = random.randint(0, 1)
-                        if (move_random == 0) and Directions.WEST in legal:
-                            move = 0
-                        elif (move_random == 1) and Directions.EAST in legal:
-                            move = 1
-
-                    elif(prevMove == Directions.EAST and gameState.getWalls()[x][y+1] and Directions.EAST in legal):
-                        move = 1
-                        print("OBSTACULO NORTE - BORDEANDO DER")
-
-                    elif(prevMove == Directions.WEST and gameState.getWalls()[x][y+1] and Directions.WEST in legal):
-                        move = 0
-                        print("OBSTACULO NORTE - BORDEANDO IZQ")
-
-                    elif(Directions.NORTH not in legal):
-                        print("OBSTACULO NORTE")
-                        left = x
-                        right = x
-
-                        while left > 0 and gameState.getWalls()[left][y+1]:
-                            left -= 1
-
-                        while right < gameState.data.layout.width and gameState.getWalls()[right][y+1]:
-                            right += 1
-
-                        goLeft = x - left < right - x
-
-                        if((x+right == gameState.data.layout.width or goLeft or Directions.EAST not in legal) and Directions.WEST in legal):
-                            move = 0
-                        elif((x-left == 0 or not goLeft or Directions.WEST not in legal) and Directions.EAST in legal):
-                            move = 1
-                        elif(Directions.SOUTH in legal):
-                            move = 3
-                    else:
-                        move = 2
-                        print("PREFERENCIA NORTE")
-
-                # PREFERENCIA SUR
-                else:
-
-                    '''if((prevMove==Directions.EAST or prevMove==Directions.WEST) and not gameState.getWalls()[x][y-1] and Directions.SOUTH in legal): 
-                    move = 3
-                    print("OBSTACULO SUR - BORDEANDO FIN")'''
-
-                    if(prevMove == Directions.NORTH and (not gameState.getWalls()[x-1][y] or not gameState.getWalls()[x+1][y])):
-                        print("OBSTACULO ESTE/OESTE - BORDEANDO FIN")
-                        move_random = random.randint(0, 1)
-                        if (move_random == 0) and Directions.WEST in legal:
-                            move = 0
-                        elif (move_random == 1) and Directions.EAST in legal:
-                            move = 1
-
-                    elif(prevMove == Directions.EAST and gameState.getWalls()[x][y-1] and Directions.EAST in legal):
-                        move = 1
-                        print("OBSTACULO SUR - BORDEANDO DER")
-                    elif(prevMove == Directions.WEST and gameState.getWalls()[x][y-1] and Directions.WEST in legal):
-                        move = 0
-                        print("OBSTACULO SUR - BORDEANDO IZQ")
-
-                    elif(Directions.SOUTH not in legal):
-                        print("OBSTACULO SUR")
-                        left = x
-                        right = x
-
-                        while left > 0 and gameState.getWalls()[left][y-1]:
-                            left -= 1
-                        while right < gameState.data.layout.width and gameState.getWalls()[right][y-1]:
-                            right += 1
-                        goLeft = x - left < right - x
-
-                        if((x+right == gameState.data.layout.width or goLeft or Directions.EAST not in legal) and Directions.WEST in legal):
-                            move = 0
-                        elif((x-left == 0 or not goLeft or Directions.WEST not in legal) and Directions.EAST in legal):
-                            move = 1
-                        elif(Directions.NORTH in legal):
-                            move = 2
-                    else:
-                        move = 3
-                        print("PREFERENCIA SUR")
-
-        print(">", move)
+                            print("PREFERENCIA SUR")
+            #print(">", move) 
+        except Exception:
+            '''END GAME'''
 
         return move
 
     def getReward(self, previousGameState, gameState):
         try:
-
             previous_pacman_position = previousGameState.getPacmanPosition()
             previous_ghost_positions = previousGameState.getGhostPositions()
             previous_nearest_ghost_index = previousGameState.data.ghostDistances.index(min(
@@ -667,7 +607,7 @@ class QLearningAgent(BustersAgent):
             else:
                 reward = 0
         except Exception:
-            reward = 0
+            reward = 1
         return reward
 
     def printStateData(self, state_data):
@@ -754,7 +694,6 @@ class QLearningAgent(BustersAgent):
 
         state = self.getStateData(gameState)  # MODIFIED#
         legalActions = gameState.getLegalActions(0)
-        print(legalActions)
         if "Stop" in legalActions:
             legalActions.remove("Stop")
         action = None
@@ -783,8 +722,6 @@ class QLearningAgent(BustersAgent):
 
         """
         # TRACE for transition and position to update. Comment the following lines if you do not want to see that trace
-        print("Update Q-table with transition: ",
-              current_state, action, next_state, reward)
 
         position = self.computePosition(current_state)
         action_num = self.actions.get(action)
@@ -815,91 +752,3 @@ class QLearningAgent(BustersAgent):
         for line in self.q_table:
             print(line)
         print("\n")
-
-###################################################################################################
-
-###################################################################################################
-
-
-'''
-class PacmanQAgent(QLearningAgent):
-    "Exactly the same as QLearningAgent, but with different default parameters"
-
-    def __init__(self, epsilon=0.05, gamma=0.8, alpha=0.2, numTraining=0, **args):
-        """
-        These default parameters can be changed from the pacman.py command line.
-        For example, to change the exploration rate, try:
-            python pacman.py -p PacmanQLearningAgent -a epsilon=0.1
-
-        alpha    - learning rate
-        epsilon  - exploration rate
-        gamma    - discount factor
-        numTraining - number of training episodes, i.e. no learning after these many episodes
-        """
-        args['epsilon'] = epsilon
-        args['gamma'] = gamma
-        args['alpha'] = alpha
-        args['numTraining'] = numTraining
-        self.index = 0  # This is always Pacman
-        QLearningAgent.__init__(self, **args)
-
-    def getAction(self, state):
-        """
-        Simply calls the getAction method of QLearningAgent and then
-        informs parent of action for Pacman.  Do not change or remove this
-        method.
-        """
-        action = QLearningAgent.getAction(self, state)
-        self.doAction(state, action)
-        return action
-
-class ApproximateQAgent(PacmanQAgent):
-    """
-       ApproximateQLearningAgent
-
-       You should only have to overwrite getQValue
-       and update.  All other QLearningAgent functions
-       should work as is.
-    """
-
-    def __init__(self, extractor='IdentityExtractor', **args):
-        self.featExtractor = util.lookup(extractor, globals())()
-        PacmanQAgent.__init__(self, **args)
-        self.weights = util.Counter()
-
-    def getWeights(self):
-        return self.weights
-
-    def getQValue(self, state, action):
-        """
-          Should return Q(state,action) = w * featureVector
-          where * is the dotProduct operator
-        """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
-    def update(self, state, action, nextState, reward):
-        """
-           Should update your weights based on transition
-        """
-        "*** YOUR CODE HERE ***"
-
-        feats = self.featExtractor.getFeatures(state, action)
-        for f in feats:
-            self.weights[f] = self.weights[f] + self.alpha * feats[f] * \
-                ((reward + self.discount * self.computeValueFromQValues(nextState)
-                  ) - self.getQValue(state, action))
-
-        # util.raiseNotDefined()
-
-    def final(self, state):
-        "Called at the end of each game."
-        # call the super-class final method
-        PacmanQAgent.final(self, state)
-
-        # did we finish training?
-        if self.episodesSoFar == self.numTraining:
-            # you might want to print your weights here for debugging
-            "*** YOUR CODE HERE ***"
-            pass
-'''
