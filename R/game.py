@@ -10,6 +10,8 @@ from past.utils import old_div
 from builtins import range
 from builtins import str
 
+import distanceCalculator
+
 
 # game.py
 # -------
@@ -771,18 +773,21 @@ class Game(object):
                         print("END GAME")
                     else:
                         '''GAME'''
-                        
                         #REWARD
                         reward = 0
                         #   -> SCORE CHANGE:    self.state.data.scoreChange()
-                        if(self.state.data.scoreChange>0):
-                            reward = 100
+                        #print("SC:",self.state.data.scoreChange)
+
+                        #if(self.state.data.scoreChange>0):
+                        #    reward = self.state.data.scoreChange
+
+                        reward = agent.getReward(observation,new_observation)
+                        print("Reward:",reward)
                         agent.update(self.state, previous_state_data, action, current_state_data, reward)
 
                         print("Previous_state_data: ",agent.printStateData(previous_state_data))
                         print("Current_state_data: ",agent.printStateData(current_state_data))
                         previous_state_data = current_state_data
-                        #previous_score = current_score
 
             # Change the display
             self.display.update(self.state.data)

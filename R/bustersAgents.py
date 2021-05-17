@@ -333,77 +333,27 @@ class BasicAgentAA(BustersAgent):
 
 class QLearningAgent(BustersAgent):
 
-    def getStateData(self, gameState):
-        try:
-
-            pacman_position = gameState.getPacmanPosition()
-            ghost_positions = gameState.getGhostPositions()
-            # print("ghostDistances:",gameState.data.ghostDistances)
-            # print("ghost_positions:",ghost_positions)
-            nearest_ghost_index = gameState.data.ghostDistances.index(
-                min(value for value in gameState.data.ghostDistances if value is not None))
-            nearest_ghost = ghost_positions[nearest_ghost_index]
-
-            # print("nearest_ghost:",nearest_ghost)
-            x_dif = pacman_position[0] - nearest_ghost[0]
-            y_dif = pacman_position[1] - nearest_ghost[1]
-        except Exception:
-            return -1
-
-        current_state = -1
-
-        ''' STATES:
-                0)  LEFT
-                1)  RIGHT
-                2)  UP 
-                3)  DOWN
-        '''
-
-        if(x_dif > 0):
-            '''LEFT'''
-            current_state = 0
-
-        elif(x_dif < 0):
-            '''RIGHT'''
-            current_state = 1
-
-        elif(y_dif < 0):
-            ''' UP '''
-            current_state = 2
-        else:
-            '''DOWN'''
-            current_state = 3
-
-        return current_state
-
-    def printStateData(self, state_data):
-        if(state_data == 0):
-            '''LEFT'''
-            state_info = "LEFT"
-
-        elif(state_data == 0):
-            '''RIGHT'''
-            state_info = "RIGHT"
-
-        elif(state_data == 0):
-            ''' UP '''
-            state_info = "UP"
-        else:
-            '''DOWN'''
-            state_info = "DOWN"
-
-        return state_info
-
     def __init__(self, **args):
         BustersAgent.__init__(self, **args)
         self.actions = {"North": 0, "East": 1, "South": 2, "West": 3}
-        self.table_file = open("qtable.txt", "r+")
-        self.q_table = self.readQtable()
-        self.epsilon = 0.6
-        self.alpha = 0.4
-        self.discount = 0.4
+        #self.table_file = open("qtable.txt", "r+")
+        #self.q_table = self.readQtable()
+        self.epsilon = 0.6  
+        self.alpha = 0.5    #APRENDIZAJE
+        self.discount = 0.4 
         self.reward = 0
         self.numGhosts = 4
+        
+        self.states = {"LEFT": 0, "RIGHT": 1, "UP": 2, "DOWN": 3}
+
+        if os.path.isfile('qtable.txt'):
+            self.table_file = open("qtable.txt", "r+")
+            self.q_table = self.readQtable()
+            print("NEEUI")
+        else:
+            self.table_file = open("qtable.txt", "w+")
+            self.q_table = np.zeros((len(self.states),len(self.actions)))
+            print("EUUUU")
 
     def readQtable(self):
         "Read qtable from disc"
@@ -430,12 +380,100 @@ class QLearningAgent(BustersAgent):
         self.writeQtable()
         self.table_file.close()
 
+    def getStateData(self, gameState):
+        try:
+            pacman_position = gameState.getPacmanPosition()
+            ghost_positions = gameState.getGhostPositions()
+            #print("ghostDistances:",gameState.data.ghostDistances)
+            #print("ghost_positions:",ghost_positions)
+            nearest_ghost_index = gameState.data.ghostDistances.index(min(value for value in gameState.data.ghostDistances if value is not None))
+            nearest_ghost = ghost_positions[nearest_ghost_index]
+            #print("nearest_ghost:",nearest_ghost)
+            x_dif = pacman_position[0] - nearest_ghost[0]
+            y_dif = pacman_position[1] - nearest_ghost[1]
+
+
+        except Exception:
+            return -1
+
+        current_state = -1
+
+        ''' STATES:
+                0)  LEFT
+                1)  RIGHT
+                2)  UP 
+                3)  DOWN
+        '''
+        if(x_dif>0): 
+            '''LEFT'''
+            current_state = 0    
+
+        elif(x_dif<0):  
+            '''RIGHT'''
+            current_state = 1
+
+        elif(y_dif<0):  
+            ''' UP '''
+            current_state = 2
+        else:   
+            '''DOWN'''
+            current_state = 3
+
+        return current_state
+
+    def getReward(self, previousGameState, gameState):
+        try:
+            
+            previous_pacman_position = previousGameState.getPacmanPosition()
+            previous_ghost_positions = previousGameState.getGhostPositions()
+            previous_nearest_ghost_index = previousGameState.data.ghostDistances.index(min(value for value in previousGameState.data.ghostDistances if value is not None))
+            
+            pacman_position = gameState.getPacmanPosition()
+            ghost_positions = gameState.getGhostPositions()
+            nearest_ghost_index = gameState.data.ghostDistances.index(min(value for value in gameState.data.ghostDistances if value is not None))
+
+            if(nearest_ghost_index==previous_nearest_ghost_index):
+
+                previous_nearest_ghost = previous_ghost_positions[previous_nearest_ghost_index]
+                nearest_ghost = ghost_positions[nearest_ghost_index]
+
+                distlayout = distanceCalculator.computeDistances(gameState.data.layout)
+                prevDistance = distanceCalculator.getDistanceOnGrid(distlayout, previous_pacman_position, previous_nearest_ghost)
+                nextDistance = distanceCalculator.getDistanceOnGrid(distlayout, pacman_position, nearest_ghost)
+                reward = prevDistance - nextDistance
+            elif(gameState.data.scoreChange>0):
+                reward = gameState.data.scoreChange
+                print("TE COMI")
+            else:
+                reward = 0    
+        except Exception:
+            reward = 0 
+        return reward
+
+    def printStateData(self, state_data):
+        if(state_data == 0): 
+            '''LEFT'''
+            state_info = "LEFT"    
+
+        elif(state_data == 1):  
+            '''RIGHT'''
+            state_info = "RIGHT" 
+
+        elif(state_data == 2):
+            ''' UP '''
+            state_info = "UP" 
+        else:   
+            '''DOWN'''
+            state_info = "DOWN" 
+
+        return state_info
+
     def computePosition(self, state):
         """
         Compute the row of the qtable for a given state.
         For instance, the state (3,1) is the row 7
         """
-        # print(state)
+        #print(state)   modified
         return state
 
     def getQValue(self, state, action):
@@ -494,7 +532,7 @@ class QLearningAgent(BustersAgent):
         # legal = gameState.getLegalActions(0) ##Legal position from the pacman
         # legalActions = gameState..getLegalActions(state)
 
-        state = self.getStateData(gameState)  # MODIFIED#
+        state = self.getStateData(gameState)  #MODIFIED#
         legalActions = gameState.getLegalActions(0)
         if "Stop" in legalActions:
             legalActions.remove("Stop")
@@ -517,16 +555,14 @@ class QLearningAgent(BustersAgent):
         Otherwise -> reward 0
 
         Q-Learning update:
-
-        if terminal_state:
-        Q(state,action) <- (1-self.alpha) Q(state,action) + self.alpha * (r + 0)
-        else:
-        Q(state,action) <- (1-self.alpha) Q(state,action) + self.alpha * (r + self.discount * max a' Q(nextState, a'))
+            if terminal_state:
+            Q(state,action) <- (1-self.alpha) Q(state,action) + self.alpha * (r + 0)
+            else:
+            Q(state,action) <- (1-self.alpha) Q(state,action) + self.alpha * (r + self.discount * max a' Q(nextState, a'))
 
         """
         # TRACE for transition and position to update. Comment the following lines if you do not want to see that trace
-        print("Update Q-table with transition: ",
-              current_state, action, next_state, reward)
+        print("Update Q-table with transition: ", current_state, action, next_state, reward)
 
         position = self.computePosition(current_state)
         action_num = self.actions.get(action)
@@ -541,8 +577,8 @@ class QLearningAgent(BustersAgent):
                               self.computeValueFromQValues(gameState, next_state))
 
         # TRACE for updated q-table. Comment the following lines if you do not want to see that trace
-        # print("Q-table:")
-        # self.printQtable()
+        #print("Q-table:")
+        #self.printQtable()
 
     def getPolicy(self, gameState, state):
         "Return the best action in the qtable for a given state"
@@ -552,13 +588,6 @@ class QLearningAgent(BustersAgent):
         "Return the highest q value for a given state"
         return self.computeValueFromQValues(state)
 
-    '''def function(self, state):
-        x = 1
-        return x'''
-
-    def scorito(self, state):
-        return state.getScore()
-
     def printQtable(self):
         "Print qtable"
         for line in self.q_table:
@@ -566,12 +595,10 @@ class QLearningAgent(BustersAgent):
         print("\n")
 
 ###################################################################################################
-###################################################################################################
-###################################################################################################
-###################################################################################################
+
 ###################################################################################################
 
-
+'''
 class PacmanQAgent(QLearningAgent):
     "Exactly the same as QLearningAgent, but with different default parameters"
 
@@ -602,7 +629,6 @@ class PacmanQAgent(QLearningAgent):
         action = QLearningAgent.getAction(self, state)
         self.doAction(state, action)
         return action
-
 
 class ApproximateQAgent(PacmanQAgent):
     """
@@ -653,3 +679,4 @@ class ApproximateQAgent(PacmanQAgent):
             # you might want to print your weights here for debugging
             "*** YOUR CODE HERE ***"
             pass
+'''
