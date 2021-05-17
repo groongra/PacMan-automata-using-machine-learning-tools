@@ -751,42 +751,46 @@ class Game(object):
             self.moveHistory.append((agentIndex, action))
             if self.catchExceptions:
                 try:
-                    self.state = self.state.generateSuccessor(agentIndex, action)
+                    self.state = self.state.generateSuccessor(
+                        agentIndex, action)
                 except Exception as data:
                     self.mute(agentIndex)
                     self._agentCrash(agentIndex)
                     self.unmute()
                     return
             else:
-                
+
                 self.state = self.state.generateSuccessor(agentIndex, action)
 
                 # UPDATE Q-Learning (estado tick, accion, estado tick siguiente, refuerzo)
-            
+
                 if (agentIndex == 0) & (hasattr(agent, "update")):
-                    
+
                     new_observation = self.state
                     previous_state_data = agent.getStateData(observation)
                     current_state_data = agent.getStateData(new_observation)
-                    
-                    if(previous_state_data == -1|current_state_data ==-1):
+
+                    if(previous_state_data == -1 | current_state_data == -1):
                         print("END GAME")
                     else:
                         '''GAME'''
-                        #REWARD
+                        # REWARD
                         reward = 0
                         #   -> SCORE CHANGE:    self.state.data.scoreChange()
-                        #print("SC:",self.state.data.scoreChange)
+                        # print("SC:",self.state.data.scoreChange)
 
-                        #if(self.state.data.scoreChange>0):
+                        # if(self.state.data.scoreChange>0):
                         #    reward = self.state.data.scoreChange
 
-                        reward = agent.getReward(observation,new_observation)
-                        print("Reward:",reward)
-                        agent.update(self.state, previous_state_data, action, current_state_data, reward)
+                        reward = agent.getReward(observation, new_observation)
+                        print("Reward:", reward)
+                        agent.update(self.state, previous_state_data,
+                                     action, current_state_data, reward)
 
-                        print("Previous_state_data: ",agent.printStateData(previous_state_data))
-                        print("Current_state_data: ",agent.printStateData(current_state_data))
+                        print("Previous_state_data: ",
+                              agent.printStateData(previous_state_data))
+                        print("Current_state_data: ",
+                              agent.printStateData(current_state_data))
                         previous_state_data = current_state_data
 
             # Change the display

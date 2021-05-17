@@ -1,15 +1,15 @@
 from __future__ import print_function
+from builtins import str
+from builtins import range
+import sys
+import math
+import random
+import string
+import time
+import types
+import tkinter
 from future import standard_library
 standard_library.install_aliases()
-import tkinter
-import types
-import time
-import string
-import random
-import math
-import sys
-from builtins import range
-from builtins import str
 # graphicsUtils.py
 # ----------------
 # Licensing Information:  You are free to use or extend these projects for
@@ -22,8 +22,6 @@ from builtins import str
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
-
-
 
 
 _Windows = sys.platform == 'win32'  # True if on Win95/98/NT
