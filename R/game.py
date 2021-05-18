@@ -772,14 +772,20 @@ class Game(object):
                     print("__________________current state__________________")
                     current_state_data = agent.getStateData(new_observation)
 
-                    if(previous_state_data != -1 | current_state_data != -1):
+                    """conditionUpdate = ((previous_state_data != -1)
+                                       | (current_state_data != -1))"""
+
+                    conditionUpdate = False
+
+                    if(conditionUpdate):
                         '''GAME'''
                         reward = agent.getReward(observation, new_observation)
-                        agent.update(self.state, previous_state_data, action, current_state_data, reward)
-                        print("_________Update Q-table_________ with transition:", previous_state_data, action, current_state_data, reward)
+                        agent.update(self.state, previous_state_data,
+                                     action, current_state_data, reward)
+                        print("_________Update Q-table_________ with transition:",
+                              previous_state_data, action, current_state_data, reward)
                         previous_state_data = current_state_data
                         print("\n")
-                    
 
             # Change the display
             self.display.update(self.state.data)

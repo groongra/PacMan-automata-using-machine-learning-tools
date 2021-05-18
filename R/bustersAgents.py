@@ -336,7 +336,7 @@ class QLearningAgent(BustersAgent):
     def __init__(self, **args):
         BustersAgent.__init__(self, **args)
         self.actions = {"North": 0, "East": 1, "South": 2, "West": 3}
-        self.epsilon = 0.1
+        self.epsilon = 0.05
         self.alpha = 0.05
         self.discount = 0.05
         self.reward = 0
@@ -378,7 +378,6 @@ class QLearningAgent(BustersAgent):
         self.table_file.close()
 
     def getStateData(self, gameState):
-
         ''' STATES:
                 0)  LEFT
                 1)  RIGHT
@@ -389,11 +388,13 @@ class QLearningAgent(BustersAgent):
         move = -1
         try:
             self.countActions = self.countActions + 1
-            
-            legal = gameState.getLegalActions(0)  # Legal position from the pacman
+
+            # Legal position from the pacman
+            legal = gameState.getLegalActions(0)
             ghostsDistances = gameState.data.ghostDistances  # Manhattan distance to ghosts
 
-            minGhostsDistance = min(x for x in ghostsDistances if x is not None)
+            minGhostsDistance = min(
+                x for x in ghostsDistances if x is not None)
             ghostPosition = gameState.getGhostPositions(
             )[ghostsDistances.index(minGhostsDistance)]
             validMovements = gameState.getLegalPacmanActions()
@@ -402,7 +403,7 @@ class QLearningAgent(BustersAgent):
             yDistanceToGhost = abs(ghostPosition[1] - pacPosition[1])
             prevMove = gameState.data.agentStates[0].getDirection()
             x, y = gameState.getPacmanPosition()
-                #print("$", prevMove)
+            #print("$", prevMove)
             if(len(validMovements) == 5 and not gameState.getWalls()[x+1][y+1] and not gameState.getWalls()[x+1][y-1] and not gameState.getWalls()[x-1][y+1] and not gameState.getWalls()[x-1][y-1]):
                 print("LIBRE")
                 if(xDistanceToGhost > yDistanceToGhost):
@@ -425,11 +426,15 @@ class QLearningAgent(BustersAgent):
                             print("OBSTACULO NORTE/SUR - BORDEANDO FIN")
                             move_random = random.randint(0, 1)
                             if (move_random == 0):
-                                if(Directions.NORTH in legal): move = 2
-                                elif(Directions.SOUTH in legal): move = 3
+                                if(Directions.NORTH in legal):
+                                    move = 2
+                                elif(Directions.SOUTH in legal):
+                                    move = 3
                             elif (move_random == 1):
-                                if(Directions.SOUTH in legal): move = 3
-                                if(Directions.NORTH in legal): move = 2
+                                if(Directions.SOUTH in legal):
+                                    move = 3
+                                if(Directions.NORTH in legal):
+                                    move = 2
                         elif(prevMove == Directions.NORTH and gameState.getWalls()[x+1][y] and Directions.NORTH in legal):
                             move = 2
                             print("OBSTACULO ESTE - BORDEANDO ARRIBA")
@@ -462,11 +467,15 @@ class QLearningAgent(BustersAgent):
                             print("OBSTACULO NORTE/SUR - BORDEANDO FIN")
                             move_random = random.randint(0, 1)
                             if (move_random == 0):
-                                if(Directions.NORTH in legal): move = 2
-                                elif(Directions.SOUTH in legal): move = 3
+                                if(Directions.NORTH in legal):
+                                    move = 2
+                                elif(Directions.SOUTH in legal):
+                                    move = 3
                             elif (move_random == 1):
-                                if(Directions.SOUTH in legal): move = 3
-                                if(Directions.NORTH in legal): move = 2
+                                if(Directions.SOUTH in legal):
+                                    move = 3
+                                if(Directions.NORTH in legal):
+                                    move = 2
                         elif(prevMove == Directions.NORTH and gameState.getWalls()[x-1][y] and Directions.NORTH) in legal:
                             move = 2
                             print("OBSTACULO OESTE - BORDEANDO ARRIBA")
@@ -499,13 +508,17 @@ class QLearningAgent(BustersAgent):
                         if(prevMove == Directions.SOUTH and (not gameState.getWalls()[x-1][y] or not gameState.getWalls()[x+1][y])):
                             print("OBSTACULO ESTE/OESTE - BORDEANDO FIN")
                             move_random = random.randint(0, 1)
-                            print("RAND",move_random)
-                            if (move_random == 0): 
-                                if(Directions.WEST in legal): move = 0
-                                elif(Directions.EAST in legal):move = 1
+                            print("RAND", move_random)
+                            if (move_random == 0):
+                                if(Directions.WEST in legal):
+                                    move = 0
+                                elif(Directions.EAST in legal):
+                                    move = 1
                             elif (move_random == 1):
-                                if(Directions.EAST in legal):move = 1
-                                elif(Directions.WEST in legal): move = 0
+                                if(Directions.EAST in legal):
+                                    move = 1
+                                elif(Directions.WEST in legal):
+                                    move = 0
                         elif(prevMove == Directions.EAST and gameState.getWalls()[x][y+1] and Directions.EAST in legal):
                             move = 1
                             print("OBSTACULO NORTE - BORDEANDO DER")
@@ -539,12 +552,16 @@ class QLearningAgent(BustersAgent):
                         if(prevMove == Directions.NORTH and (not gameState.getWalls()[x-1][y] or not gameState.getWalls()[x+1][y])):
                             print("OBSTACULO ESTE/OESTE - BORDEANDO FIN")
                             move_random = random.randint(0, 1)
-                            if (move_random == 0): 
-                                if(Directions.WEST in legal): move = 0
-                                elif(Directions.EAST in legal):move = 1
+                            if (move_random == 0):
+                                if(Directions.WEST in legal):
+                                    move = 0
+                                elif(Directions.EAST in legal):
+                                    move = 1
                             elif (move_random == 1) and Directions.EAST in legal:
-                                if(Directions.EAST in legal):move = 1
-                                elif(Directions.WEST in legal): move = 0
+                                if(Directions.EAST in legal):
+                                    move = 1
+                                elif(Directions.WEST in legal):
+                                    move = 0
                         elif(prevMove == Directions.EAST and gameState.getWalls()[x][y-1] and Directions.EAST in legal):
                             move = 1
                             print("OBSTACULO SUR - BORDEANDO DER")
@@ -571,7 +588,7 @@ class QLearningAgent(BustersAgent):
                         else:
                             move = 3
                             print("PREFERENCIA SUR")
-            #print(">", move) 
+            #print(">", move)
         except Exception:
             '''END GAME'''
 
