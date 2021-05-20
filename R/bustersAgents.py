@@ -342,12 +342,15 @@ class QLearningAgent(BustersAgent):
         self.reward = 0
         self.numGhosts = 4
         self.countActions = 0
+        self.switch = 1
 
         self.states = {"LEFT": 0, "RIGHT": 1, "UP": 2, "DOWN": 3}
 
-        if os.path.isfile('qtable.txt'):
-            self.table_file = open("qtable.txt", "r+")
-            self.q_table = self.readQtable()
+        if os.path.exists("qtable.txt"):
+            if self.switch == 1:
+                self.table_file = open("qtable.txt", "r+")
+                self.q_table = self.readQtable()
+                self.switch = 0
         else:
             self.table_file = open("qtable.txt", "w+")
             self.q_table = np.zeros((len(self.states), len(self.actions)))
